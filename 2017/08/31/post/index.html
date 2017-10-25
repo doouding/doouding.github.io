@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <title>关于这个博客</title>
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="page">
+  <header class="header">
+  <a class="home nav" href="https://codertx.github.io">home.</a>
+  
+</header>
+  <div class="container">
+    <section class="main"><section class="article-entry">
+  <h1>关于这个博客</h1>
+  <div class="date">August 31st 2017</div>
+  <article class="article">
+  <p>在用github page服务之前，我用过Wordpress、Ghost这两个博客系统。不过自己搭博客的坏处就是得自己来维护。所以一直都是断断续续的写博客，这次用了hexo这个博客生成器，感觉确实不错。不用再自己维护博客系统了，也不用一直去续费服务器。。。</p>
+<p>我平常倒是没有写博客的习惯，一直都是这样，博文的数量也不多，所以以前的博客数据也都没有备份下来。后来用了一款开源的笔记系统，名叫蚂蚁笔记。这个笔记好用之处在于他可以把你记录下来的笔记转变成博客，让其他人看。这就很方便了，我虽然不怎么写博客，但是有记笔记的习惯。</p>
+<p>蚂蚁笔记虽然好用，但是手动调整样式还是比较麻烦。Markdown这种写内容的同时进行排版就很爽。所以后来我就发现一款Cmd Markdown，这款笔记就很爽了，既能够用Markdown记笔记，也能够像蚂蚁笔记一样把笔记转成一个博客让别人看。</p>
+<p>后来我又发现。。。，光记笔记也不行啊。我想保存网页上的内容。能做到这个功能的我知道的有有道云笔记和Evernote。Evernote我从高中就开始用，但是后来实在受不了它那个难用的文本编辑器，所以抛弃了它。有道云笔记就很爽了（这次是真的很爽）。它有Markdown和普通文本编辑器两种记录笔记的方式，而且能够抓取网页内容，对代码高亮也支持的比较好。唯一不足的是他没有博客分享功能。不过现在有了github page服务就不再需要了。</p>
+<p>所以目前的状况是，我在每个笔记软件上面都有一些笔记，有很多笔记我觉得值得分享，我会一个一个慢慢传到这个github page上面来的。以前的笔记是写给我自己看的，所以内容会比较乱，我上传的时候会润色一下，保证可读性。</p>
+<p>顺便安利一下，这个Hexo主题是我自己写的，如果你喜欢，可以star一下，虽然会有一些小Bug。但是你可以去提交issue，我看到的话会第一时间去解决的。主题名称叫Lightil，因为希望做一个轻量的样式。地址是 <a href="https://github.com/codertx/hexo-theme-lightit" target="_blank" rel="external">https://github.com/codertx/hexo-theme-lightit</a></p>
+
+  </article>
+</section></section>
+  </div>
+  <footer class="footer">
+  <span class="text">Powered by </span>
+  <a href="https://hexo.io/" target="_blank">Hexo</a>
+  <span> & Theme by</span>
+  <a href="https://github.com/codertx/hexo-theme-lightit" target="_blank">lightit</a>
+</footer>
+</body>
+<script>
+  (function(){
+    var dotCount = 20
+    var dots = []
+    var dotBaseSpeed = 0.5
+    var canvas = document.createElement('canvas')
+    var ctx = canvas.getContext('2d')
+    var cHeight = window.innerHeight
+    var cWidth = window.innerWidth
+    var bgColor = '#FAFAFA'
+    var dotColor = '#EEE'
+    var dotBaseRadius = 6
+    var maxLineLength = cWidth > cHeight ? cWidth * 0.28 : cHeight * 0.28
+    var requestAnimationFrame
+
+    function initRequestAnimationFrame() {
+      var vendor = ['', 'ms', 'moz', 'webkit', 'o']
+
+      for (var i = 0; i < vendor.length && !window.requestAnimationFrame; i++) {
+        window.requestAnimationFrame = window[vendor[i] + 'RequestAnimationFrame']
+      }
+
+      requestAnimationFrame = window.requestAnimationFrame
+
+      return typeof requestAnimationFrame === 'function' ? true : false
+    }    
+
+    function initCanvas() {
+      var canvasStyle = {
+        top: 0,
+        left: 0,
+        position: 'fixed',
+        zIndex: -1
+      }
+
+      for (var pro in canvasStyle) {
+        canvas.style[pro] = canvasStyle[pro]
+      }
+
+      canvas.width = cWidth
+      canvas.height = cHeight
+
+      document.body.appendChild(canvas)
+    }
+
+    function initDots() {
+      for (var i = 0; i < dotCount; i++) {
+        dots.push(newDot())
+      }
+    }
+
+    function init() {
+      if (!initRequestAnimationFrame()) return
+      initCanvas()
+      initDots()
+      drawDots()
+    }
+
+    function newDot() {
+      return {
+        x: random(0, cWidth),
+        y: random(0, cHeight),
+        radius: random(dotBaseRadius * 0.5, dotBaseRadius),
+        xSpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed),
+        ySpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed)
+      }
+    }
+
+    function moveDots() {
+      for (var i = 0; i < dotCount; i++) {
+        var speedX = (dots[i].x + dots[i].xSpeed) % cWidth 
+        var speedY = (dots[i].y + dots[i].ySpeed) % cHeight
+        dots[i].x = speedX >= 0 ? speedX : speedX + cWidth
+        dots[i].y = speedY >= 0 ? speedY : speedY + cHeight
+      }
+    }
+
+    function drawDots() {
+      ctx.fillStyle = bgColor
+      ctx.fillRect(0, 0, cWidth, cHeight)
+
+      for (var i = 0; i < dotCount; i++) {
+        ctx.beginPath()
+        ctx.arc(dots[i].x, dots[i].y, dots[i].radius, 0, 2 * Math.PI, false)
+        ctx.fillStyle = dotColor
+        ctx.fill()
+
+        for (var j = i + 1; j < dotCount; j++) {
+          if (Math.sqrt(Math.pow(dots[i].x - dots[j].x, 2) + Math.pow(dots[i].y - dots[j].y, 2)) < maxLineLength) {
+            ctx.beginPath()
+            ctx.strokeStyle = dotColor
+            ctx.moveTo(dots[i].x, dots[i].y)
+            ctx.lineTo(dots[j].x, dots[j].y)
+            ctx.stroke()
+          }
+        }
+      }
+  
+      moveDots()
+      requestAnimationFrame(drawDots)
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min
+    }
+
+    function randomPN() {
+      return Math.random() > 0.5 ? 1 : -1
+    }
+
+    window.addEventListener('DOMContentLoaded', init,false)
+  }())
+</script>

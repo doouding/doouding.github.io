@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <title>乌鸦</title>
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="page">
+  <header class="header">
+  <a class="home nav" href="https://codertx.github.io">home.</a>
+  
+</header>
+  <div class="container">
+    <section class="main"><h1 class="title">乌鸦</h1>
+<h2 class="subtitle">
+  <span id="blinkSubtitle"></span>
+</h2>
+<script>
+  (function(){
+    var titles = JSON.parse('["Where I live, Where I write.","开门，基佬送温暖。"]')
+    var blinkTitle = document.getElementById('blinkSubtitle')
+    var typeSpeed = 120
+    var delSpeed = 50
+
+    function textGenerater(str) {
+      function typeText(s) {
+        var index = 1
+        var length = s.length
+
+        return function () {
+
+          return {
+            done: index === length,
+            str: s.slice(0, index++)
+          }
+        }
+      }
+
+      function delText(s) {
+        var index = s.length
+
+        return function () {
+          return {
+            done: index === 0,
+            str: s.slice(0, index--)
+          }
+        }
+      }
+      
+      return {
+        'type': typeText(str),
+        'del': delText(str)
+      }
+    }
+
+    function textChange(i) {
+      var tg = textGenerater(titles[i])
+      var intervalID
+      
+      function showTxt () {
+        var t = tg['type']()
+        blinkTitle.innerHTML = t.str
+        
+        if (t.done) {
+          clearInterval(intervalID)
+          setTimeout(function(){
+            intervalID = setInterval(delTxt, delSpeed)
+          }, 1000)
+        }
+      }
+
+      function delTxt () {
+        var t = tg['del']()
+        blinkTitle.innerHTML = t.str
+
+        if (t.done) {
+          clearInterval(intervalID)
+          textChange((i + 1) % titles.length)
+        }
+      }
+
+      intervalID = setInterval(showTxt, typeSpeed)
+    }
+
+    textChange(0)
+  }())
+</script>
+<div class="societies">
+  
+    <a class="iconfont social" href="https://weibo.com/teeld" target="_blank">&#xe6c8;</a>
+  
+  
+    <a class="iconfont social" href="https://twitter.com/codertx" target="_blank">&#xe638;</a>
+  
+  
+    <a class="iconfont social" href="https://www.instagram.com/codertx" target="_blank">&#xe83d;</a>
+  
+  
+    <a class="iconfont social" href="https://github.com/codertx" target="_blank">&#xe605;</a>
+  
+  
+</div>
+<div class="posts">
+  <div class="post-list" id="postList"></div>
+  <div class="post-page">
+    <span class="iconfont page" id="pagePre">&#xe600;</span>
+    <span class="iconfont page" id="pageNext">&#xe601;</span>
+  </div>
+</div>
+<script>
+  (function(){
+    var posts = JSON.parse('[{"url":"/2016/05/03/about-em-and-rem/","title":"说一说CSS里面的数值单位","date":"2016-05-03T01:43:39.000Z"},{"url":"/2016/12/11/about-time/","title":"JavaScript Date对象以及标准时间格式","date":"2016-12-11T10:08:54.000Z"},{"url":"/2015/10/25/charset-and-encoding/","title":"什么是编码与字符集","date":"2015-10-25T04:29:14.000Z"},{"url":"/2017/10/26/why-coding/","title":"反思一下最近的状况","date":"2017-10-25T17:34:23.000Z"},{"url":"/2017/03/11/javascript-error/","title":"JavaScript异常处理最佳实践","date":"2017-03-11T07:53:08.000Z"},{"url":"/2017/08/31/post/","title":"关于这个博客","date":"2017-08-31T09:15:48.000Z"},{"url":"/2017/05/24/linux-server-manage/","title":"Linux服务与自启动","date":"2017-05-24T08:10:43.000Z"}]')
+    var pageCount = 10
+    var totalPage = Math.ceil(posts.length / pageCount)
+    var currentPage = totalPage ? 1 : 0
+
+    var preBtn = document.getElementById('pagePre')
+    var nextBtn = document.getElementById('pageNext')
+    var postList = document.getElementById('postList')
+
+    /**
+     * Change the page
+     */
+    function switcher(type) {
+      return function () {
+        if (type === 'next') {
+          if (currentPage !== totalPage) currentPage++
+        } else {
+          if (currentPage !== 1) currentPage--
+        }
+
+        btnStatus()
+        updateList()
+      }
+    }
+
+    /**
+     * Update button status
+     */
+    function btnStatus(type) {
+      if (currentPage === 1 || currentPage) {
+        preBtn.classList.add('disable')
+      } else {
+        preBtn.classList.remove('disable')
+      }
+
+      if (currentPage === totalPage) {
+        nextBtn.classList.add('disable')
+      } else {
+        nextBtn.classList.remove('disable')
+      }
+
+    }
+
+    /**
+     * Update post list on html
+     */
+    function updateList() {
+      var listHtml = ''
+
+      for (var i = (currentPage - 1); i < currentPage * pageCount; i++) {
+        if (!posts[i]) break
+        listHtml += '<a class="post-item" href="' + posts[i].url + '">' + posts[i].title + '</a>'
+      }
+
+      postList.innerHTML = listHtml
+    }
+
+    /** 
+     * Sort post accroding to its publish date
+     */
+    function sortPosts() {
+      posts.sort((a, b) => {
+        var dateA = new Date(a.date)
+        var dateB = new Date(b.date)
+
+        if (dateA.getFullYear() !== dateB.getFullYear()) return dateA.getFullYear() < dateB.getFullYear()
+        if (dateA.getMonth() !== dateB.getMonth()) return dateA.getMonth() < dateB.getMonth()
+        if (dateA.getDate() !== dateB.getDate()) return dateA.getDate() < dateB.getDate()
+      })
+    }
+
+    preBtn.addEventListener('click', switcher('pre'), false)
+    nextBtn.addEventListener('click', switcher('next'), false)
+    sortPosts()
+    updateList()
+    btnStatus()
+  }())
+</script></section>
+  </div>
+  <footer class="footer">
+  <span class="text">Powered by </span>
+  <a href="https://hexo.io/" target="_blank">Hexo</a>
+  <span> & Theme by</span>
+  <a href="https://github.com/codertx/hexo-theme-lightit" target="_blank">lightit</a>
+</footer>
+</body>
+<script>
+  (function(){
+    var dotCount = 20
+    var dots = []
+    var dotBaseSpeed = 0.5
+    var canvas = document.createElement('canvas')
+    var ctx = canvas.getContext('2d')
+    var cHeight = window.innerHeight
+    var cWidth = window.innerWidth
+    var bgColor = '#FAFAFA'
+    var dotColor = '#EEE'
+    var dotBaseRadius = 6
+    var maxLineLength = cWidth > cHeight ? cWidth * 0.28 : cHeight * 0.28
+    var requestAnimationFrame
+
+    function initRequestAnimationFrame() {
+      var vendor = ['', 'ms', 'moz', 'webkit', 'o']
+
+      for (var i = 0; i < vendor.length && !window.requestAnimationFrame; i++) {
+        window.requestAnimationFrame = window[vendor[i] + 'RequestAnimationFrame']
+      }
+
+      requestAnimationFrame = window.requestAnimationFrame
+
+      return typeof requestAnimationFrame === 'function' ? true : false
+    }    
+
+    function initCanvas() {
+      var canvasStyle = {
+        top: 0,
+        left: 0,
+        position: 'fixed',
+        zIndex: -1
+      }
+
+      for (var pro in canvasStyle) {
+        canvas.style[pro] = canvasStyle[pro]
+      }
+
+      canvas.width = cWidth
+      canvas.height = cHeight
+
+      document.body.appendChild(canvas)
+    }
+
+    function initDots() {
+      for (var i = 0; i < dotCount; i++) {
+        dots.push(newDot())
+      }
+    }
+
+    function init() {
+      if (!initRequestAnimationFrame()) return
+      initCanvas()
+      initDots()
+      drawDots()
+    }
+
+    function newDot() {
+      return {
+        x: random(0, cWidth),
+        y: random(0, cHeight),
+        radius: random(dotBaseRadius * 0.5, dotBaseRadius),
+        xSpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed),
+        ySpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed)
+      }
+    }
+
+    function moveDots() {
+      for (var i = 0; i < dotCount; i++) {
+        var speedX = (dots[i].x + dots[i].xSpeed) % cWidth 
+        var speedY = (dots[i].y + dots[i].ySpeed) % cHeight
+        dots[i].x = speedX >= 0 ? speedX : speedX + cWidth
+        dots[i].y = speedY >= 0 ? speedY : speedY + cHeight
+      }
+    }
+
+    function drawDots() {
+      ctx.fillStyle = bgColor
+      ctx.fillRect(0, 0, cWidth, cHeight)
+
+      for (var i = 0; i < dotCount; i++) {
+        ctx.beginPath()
+        ctx.arc(dots[i].x, dots[i].y, dots[i].radius, 0, 2 * Math.PI, false)
+        ctx.fillStyle = dotColor
+        ctx.fill()
+
+        for (var j = i + 1; j < dotCount; j++) {
+          if (Math.sqrt(Math.pow(dots[i].x - dots[j].x, 2) + Math.pow(dots[i].y - dots[j].y, 2)) < maxLineLength) {
+            ctx.beginPath()
+            ctx.strokeStyle = dotColor
+            ctx.moveTo(dots[i].x, dots[i].y)
+            ctx.lineTo(dots[j].x, dots[j].y)
+            ctx.stroke()
+          }
+        }
+      }
+  
+      moveDots()
+      requestAnimationFrame(drawDots)
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min
+    }
+
+    function randomPN() {
+      return Math.random() > 0.5 ? 1 : -1
+    }
+
+    window.addEventListener('DOMContentLoaded', init,false)
+  }())
+</script>

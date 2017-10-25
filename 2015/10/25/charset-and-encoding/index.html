@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <title>什么是编码与字符集</title>
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="page">
+  <header class="header">
+  <a class="home nav" href="https://codertx.github.io">home.</a>
+  
+</header>
+  <div class="container">
+    <section class="main"><section class="article-entry">
+  <h1>什么是编码与字符集</h1>
+  <div class="date">October 25th 2015</div>
+  <article class="article">
+  <h2 id="字符在计算机中该如何表示"><a href="#字符在计算机中该如何表示" class="headerlink" title="字符在计算机中该如何表示"></a>字符在计算机中该如何表示</h2><p>我们都知道，计算机只能识别0和1。对于数值类型的数据，他们之间不过是进制转换。比如十进制的<code>100</code>，只需要通过进制转换，转换成二进制<code>1100100</code>就能够在计算机中精确的表示。但是字符就不同了，相比较于数值，它没法和二进制相互转换。所以要如何表示字符便成了一个问题。既然计算机只认识0和1，并且不同进制的数值能够互相转换，那我们给每个字符都给他对应的且独一无二的数值来标识不就行了？从这里我们引出下面这些概念。</p>
+<h2 id="字符集-character-set"><a href="#字符集-character-set" class="headerlink" title="字符集(character set)"></a>字符集(character set)</h2><p>字符集(character set)顾名思义是一堆字符的集合。类似的术语还有代码页(code page)、码空间(code space)等等，他们描述的都是相似的东西，但不是完全相同。字符集不仅规定了有哪些字符，还规定了每个字符对应的数值，这个数值在同一个字符集中不能重复，这个数值称为码位(code position)或者码点(code points)。只要告诉计算机一个数值，并且告诉它所使用的字符集，计算机就知道你想要表示的是哪个字符。</p>
+<p>这个世界上有很多字符集，不同的字符集表示的字符都有所不同。可能这个字符集上面有的字符，那个字符集上面并没有。或者说这个字符在字符集A上面对应的数值是<code>1234</code>，而同样的字符在字符集B上的对应的数值是<code>9999</code>。比如中文和韩文的字符集（就算同一种语言也会有不同的字符集，我们这里只是便于理解），他们所表示的字符一定是不同的。所以当你的韩国朋友给你发来一段用韩文字符集的文字，而你使用中文字符集去解析的时候，就会出现乱码。</p>
+<h3 id="什么是Unicode"><a href="#什么是Unicode" class="headerlink" title="什么是Unicode"></a>什么是Unicode</h3><p>上面我们说到，用中文的字符集去解析韩文字符集的文字的时候回出现乱码，是十分影响各地区之间的交流的。因为你不仅得发送文字还得告诉对方你用的什么字符集，而且如果对方电脑上没有你所用的字符集，那么他就没法知道是写的文字是什么。</p>
+<p>这个时候就有人想，干脆做一种字符集，能够把世界上所有文字都包含进来，这样各地区交流就不会因为字符集问题而产生障碍了。这个字符集就叫做<code>Unicode</code>。</p>
+<p>实际上，现在使用最广泛的网站，早已可以使用Unicode。Facebook、Google、Ins这些网站，它们要服务世界各地的人，使用的文字千差万别，使用<code>Unicode</code>能保证每个地方都能正常使用。所以当你使用Ins、Facebook时，就算出现一些外国文字，也能正常显示，不会因此变成乱码。</p>
+<h2 id="编码-encoding"><a href="#编码-encoding" class="headerlink" title="编码(encoding)"></a>编码(encoding)</h2><p>实际使用中，一般不会把字符集中对应的数值直接用来表示字符，因为需要考虑到存储方式、资源占用、网络传输、兼容性等等一系列的问题，所以我们需要对数值进行进一步处理，而这一步处理就叫做编码。编码就是规定字符集中的字符在实际使用中该如何表示。比如Unicode中的”码”字的码点是<code>0x7801</code>，采用utf-8编码时，表现为<code>\xE5\x93\x88</code>。也就是中文的”码”字在计算机中使用utf-8编码表示的时候会占用三个字节，三个字节的值分别是<code>0xE5</code> <code>0x93</code> <code>0x88</code></p>
+<h2 id="具体例子"><a href="#具体例子" class="headerlink" title="具体例子"></a>具体例子</h2><ul>
+<li>对于我们常见的 ASCII 标准，因为它直接规定了每个字符使用一个7位二进制码来表示，包含128个字符。所以它既是字符集，也是编码</li>
+<li>中文常见 gb 2312 标准，它本身采用区位码形式的字符集标准(这个标准规定每个字符使用一个4位十进制数字表示码点)，实际使用中只使用采用EUC-CN来编码。但我们一般提起 gb 2312 时，也默认当做一个字符集和编码的连锁方案。</li>
+<li>Unicode 本身是一个字符集，它有很多编码方案：utf-8、utf-16、utf-32</li>
+</ul>
+<h2 id="Windows-记事本"><a href="#Windows-记事本" class="headerlink" title="Windows 记事本"></a>Windows 记事本</h2><ul>
+<li>Windows 记事本中所说的ANSI编码是指当前系统中的采用的默认编码，比如中文 Windows 对应的 GBK 编码。</li>
+<li>Unicode 指的是带有BOM的小端序 utf-16</li>
+<li>utf-8 指的是带BOM的 utf-8</li>
+</ul>
+<p>所谓的ANSI编码会随着Windows的区域设置不同而变化。比如中文Windows下用ANSI编码保存的文件放在日文Windows下就会出现乱码。</p>
+<h2 id="什么是BOM"><a href="#什么是BOM" class="headerlink" title="什么是BOM"></a>什么是BOM</h2><p>BOM(byte-order mark)全称是字节顺序标记，属于Unicode标准的一部分。BOM出现在字节流开头，用来解释当前字节流的编码。</p>
+<ul>
+<li>0xFF 0xFE 是UTF-16 小端序</li>
+<li>0xFE 0xFF 是UTF-16 大端序</li>
+<li>0xEF 0xBB 0xBF 是UTF-8</li>
+</ul>
+<p>顺便解释一下端序，大端序指的是高位字节存储在内存的低地址处，而低位字节存储在内存的高地址处。而小端序值高位字节存储在内存的高地址处，而低位字节存储在内存的低地址处。</p>
+<h2 id="为什么utf-8不需要BOM"><a href="#为什么utf-8不需要BOM" class="headerlink" title="为什么utf-8不需要BOM"></a>为什么utf-8不需要BOM</h2><p>因为utf-8可以根据每个字符的第一个字节的前四位来判断这个字符占用多少个字节。</p>
+<ul>
+<li>对于UTF-8编码中的任意字节B，如果B的第一位为0，则B为ASCI码，并且B独立的表示一个字符</li>
+<li>如果B的第一位为1，第二位为0，则B为一个非ASCII字符（该字符由多个字节表示）中的一个字节，并且不是字符的第一个字节编码</li>
+<li>如果B的前两位为1，第三位为0，则B为一个非ASCII字符（该字符由多个字节表示）中的第一个字节，并且该字符由两个字节表示</li>
+<li>如果B的前三位为1，第四位为0，则B为一个非ASCII字符（该字符由多个字节表示）中的第一个字节，并且该字符由三个字节表示</li>
+<li>如果B的前四位为1，第五位为0，则B为一个非ASCII字符（该字符由多个字节表示）中的第一个字节，并且该字符由四个字节表示</li>
+</ul>
+
+  </article>
+</section></section>
+  </div>
+  <footer class="footer">
+  <span class="text">Powered by </span>
+  <a href="https://hexo.io/" target="_blank">Hexo</a>
+  <span> & Theme by</span>
+  <a href="https://github.com/codertx/hexo-theme-lightit" target="_blank">lightit</a>
+</footer>
+</body>
+<script>
+  (function(){
+    var dotCount = 20
+    var dots = []
+    var dotBaseSpeed = 0.5
+    var canvas = document.createElement('canvas')
+    var ctx = canvas.getContext('2d')
+    var cHeight = window.innerHeight
+    var cWidth = window.innerWidth
+    var bgColor = '#FAFAFA'
+    var dotColor = '#EEE'
+    var dotBaseRadius = 6
+    var maxLineLength = cWidth > cHeight ? cWidth * 0.28 : cHeight * 0.28
+    var requestAnimationFrame
+
+    function initRequestAnimationFrame() {
+      var vendor = ['', 'ms', 'moz', 'webkit', 'o']
+
+      for (var i = 0; i < vendor.length && !window.requestAnimationFrame; i++) {
+        window.requestAnimationFrame = window[vendor[i] + 'RequestAnimationFrame']
+      }
+
+      requestAnimationFrame = window.requestAnimationFrame
+
+      return typeof requestAnimationFrame === 'function' ? true : false
+    }    
+
+    function initCanvas() {
+      var canvasStyle = {
+        top: 0,
+        left: 0,
+        position: 'fixed',
+        zIndex: -1
+      }
+
+      for (var pro in canvasStyle) {
+        canvas.style[pro] = canvasStyle[pro]
+      }
+
+      canvas.width = cWidth
+      canvas.height = cHeight
+
+      document.body.appendChild(canvas)
+    }
+
+    function initDots() {
+      for (var i = 0; i < dotCount; i++) {
+        dots.push(newDot())
+      }
+    }
+
+    function init() {
+      if (!initRequestAnimationFrame()) return
+      initCanvas()
+      initDots()
+      drawDots()
+    }
+
+    function newDot() {
+      return {
+        x: random(0, cWidth),
+        y: random(0, cHeight),
+        radius: random(dotBaseRadius * 0.5, dotBaseRadius),
+        xSpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed),
+        ySpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed)
+      }
+    }
+
+    function moveDots() {
+      for (var i = 0; i < dotCount; i++) {
+        var speedX = (dots[i].x + dots[i].xSpeed) % cWidth 
+        var speedY = (dots[i].y + dots[i].ySpeed) % cHeight
+        dots[i].x = speedX >= 0 ? speedX : speedX + cWidth
+        dots[i].y = speedY >= 0 ? speedY : speedY + cHeight
+      }
+    }
+
+    function drawDots() {
+      ctx.fillStyle = bgColor
+      ctx.fillRect(0, 0, cWidth, cHeight)
+
+      for (var i = 0; i < dotCount; i++) {
+        ctx.beginPath()
+        ctx.arc(dots[i].x, dots[i].y, dots[i].radius, 0, 2 * Math.PI, false)
+        ctx.fillStyle = dotColor
+        ctx.fill()
+
+        for (var j = i + 1; j < dotCount; j++) {
+          if (Math.sqrt(Math.pow(dots[i].x - dots[j].x, 2) + Math.pow(dots[i].y - dots[j].y, 2)) < maxLineLength) {
+            ctx.beginPath()
+            ctx.strokeStyle = dotColor
+            ctx.moveTo(dots[i].x, dots[i].y)
+            ctx.lineTo(dots[j].x, dots[j].y)
+            ctx.stroke()
+          }
+        }
+      }
+  
+      moveDots()
+      requestAnimationFrame(drawDots)
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min
+    }
+
+    function randomPN() {
+      return Math.random() > 0.5 ? 1 : -1
+    }
+
+    window.addEventListener('DOMContentLoaded', init,false)
+  }())
+</script>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <title>反思一下最近的状况</title>
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="page">
+  <header class="header">
+  <a class="home nav" href="https://codertx.github.io">home.</a>
+  
+</header>
+  <div class="container">
+    <section class="main"><section class="article-entry">
+  <h1>反思一下最近的状况</h1>
+  <div class="date">October 26th 2017</div>
+  <article class="article">
+  <h2 id="晚上就是矫情"><a href="#晚上就是矫情" class="headerlink" title="晚上就是矫情"></a>晚上就是矫情</h2><p>发现一个规律，一到晚上大脑就会想很多东西。严重的时候还会睡不着，大家可以看看这篇哈哈哈「<a href="http://daily.zhihu.com/story/4892071" target="_blank" rel="external">人啊，怎么一到黑夜，就开始矫情？</a>」。</p>
+<p>今晚上又是一个不眠之夜，于是爬起来反思反思最近的事情。</p>
+<h2 id="烦人的代码"><a href="#烦人的代码" class="headerlink" title="烦人的代码"></a>烦人的代码</h2><p>最近总是不想写代码，想起那些繁琐的业务逻辑，那个折腾人的CSS心理就很烦，能拖就拖。写完一个项目后，感觉整个世界都轻了，感觉又有了大把时间可以咸鱼。</p>
+<p>后面我想了想，让我烦躁的其实是，那些不熟悉的东西。最近学编译原理的时候，边看<code>flex</code>的文档，边写正则，会让我感觉很怵。我英语虽然还行，看个文档能凑合用，但是看到大段大段的英文还是会让我烦躁起来。再加上<code>flex</code>本身就是一个陌生的东西，更是让我感到焦虑，总是感觉读了半天还是整体并没有一个概念。</p>
+<p>写CSS的时候也是，其实我CSS还算熟悉，给个效果大部分情况下都能用CSS给你还原出来。但是，CSS本身就让人感觉是个设计不足的东西，让样式实现上面有太多的trick，没有一套比较规范的布局设计（看看那个原本用来实现图文包围的<code>float</code>属性却被拿来布局你就懂了）。这就使得，这个代码可能在这个浏览器上能实现这个效果，在另外一个浏览器上效果会有些差异。或者是，这个效果能实现，但是会影响到其他地方的布局等等。一个效果可能有好几种实现方式，你还得根据实际情况挑选一个最优的，有时候还会发现那么多实现方式，居然一个也不合适。前端工程师最幸福的就是那些做<code>electron</code>跨平台应用的东西，因为可以毫无顾忌的使用新的技术（<code>flex</code>布局的出现给CSS带来一道新的曙光）。</p>
+<p>所以，我最近老是在想我到底是不是喜欢计算机，还是我喜欢成为大牛后那种感觉而不是编程本身等等。</p>
+<p>但是后来想想，emmmmm….，我应该还是喜欢计算机的，我看到技术相关的文章会两眼放光（现在很少了，因为每天的东西太多了，变成焦虑），学习新技术的时候会想，又能多学一点新东西了。学习底层的时候会想，自己终于能够更深刻地理解原理了，很兴奋。</p>
+<p>然后又想想，emmmmm….，我之所以会烦躁是因为写业务代码本身繁琐而且自己实际上收货不了什么东西（除了钱，很少的钱T_T），而且我本身对它没什么兴趣。</p>
+<p>然后继续想想，emmmmm….，遇到困难会退缩我是承认的，我遇到难以解决的问题会暂时休息一下，但是一旦开始休息我就不想回去了。感觉那里等待我的是一个几百公斤的巨石需要让我抬走。</p>
+<p>这是最后一个，emmmmm….，我发现我总是会纠结于完美的代码，纠结于一定要自己亲手实现，纠结于功能不够完善，然后耽误了整个项目。何等的愚蠢。</p>
+<p>但问题总是要解决的，写在这里让以后的我观望，心里面焦虑了就回到博客来看看吧。。。</p>
+<ul>
+<li>遇到困难的时候请一定要分解问题，弄清困难的源头，原因，需要做哪些事情才能解决，不要把整个问题捏在一起看</li>
+<li>不要区分中文和英文，能学到新东西就是好东西。当你遇到不熟悉的东西时。赶紧Google，不管用什么方法，弄清楚他。</li>
+<li>跑起来再说，程序是一点点迭代出来的，最开始请千万不要不要纠结于完美的代码，亲手实现这些东西。让核心的东西跑起来再说，然后慢慢迭代。不然你的项目都会半途而废。好的东西都不是一次性就能做出来的。</li>
+<li>你的英语还不行，只有多读才能提升阅读速度和理解能力。。。</li>
+</ul>
+<h2 id="干嘛不写单元测试呢？"><a href="#干嘛不写单元测试呢？" class="headerlink" title="干嘛不写单元测试呢？"></a>干嘛不写单元测试呢？</h2><p>以前学编程就是先买一本书，然后慢慢看，然后看着看着就不想看了。。。，看书学编程其实是一件效率极低的事情。这个道理我最近才懂得，因为并没有足够的反馈，会让你觉得看书是一件极其无聊的事情。</p>
+<p>后来我懂了，嗯哼，学编程就是要徒手撸代码，配合Google和文档。看点tutorial熟悉下语法就直接上手做想做的东西。当然，这只是理想状态，我还达不到这种水平。我还是得看看大篇文档才能开始做东西，不然总感觉少点什么。看过一本书叫《控制论与科学方法论》有一个观点是，如果你无法做成某件事情，是因为和这件事相关的信息你知道的还不够多，应当多去手机相关的信息而不是死磕。</p>
+<p>如果你做的东西比较大，不妨写写单元测试，这真是个好东西。单元测试能保证你细分模块是否按照预期运行。第一次写单元测试，会遇到的问题是，我该测那些东西？用例怎么写？其实只要是你自己写出来的代码都应该测一下，而如果一些东西是由第三方库或者框架提供的，那么就不用测了。用例的书写规则是保证每行代码都能运行过至少一次，所以你编写的用例要保证你所测的模块中每一行代码都能得到运行，这就是基本的原则。</p>
+<p>除了测试是否满足预期运行结果。单元测试还能提供给你足够的正面反馈。想一想如果你做一个项目，比较大，做了半个星期感觉还是不够运行，会不会觉得有点耐不住性子，越往后越不知道自己在做什么鬼。单元测试就是能够让你“提前运行”你的代码，告诉你：“虽然整个项目还没跑起来，但是你这个模块做的还是66的”，而且单元测试能保证你代码的低耦合性，帮你理清模块职责。所以说了那么多，干嘛不写单元测试呢？</p>
+<p>学Django的时候第一次真正开始写单元测试（因为前端代码的单元测试太繁琐了，JavaScript松散的限制让我不知道该测些什么），Django提供了一套丰富的单元测试工具。然后就爱上了单元测试，因为它会告诉你，哎哟，小伙子代码写的挺6哦。</p>
+
+  </article>
+</section></section>
+  </div>
+  <footer class="footer">
+  <span class="text">Powered by </span>
+  <a href="https://hexo.io/" target="_blank">Hexo</a>
+  <span> & Theme by</span>
+  <a href="https://github.com/codertx/hexo-theme-lightit" target="_blank">lightit</a>
+</footer>
+</body>
+<script>
+  (function(){
+    var dotCount = 20
+    var dots = []
+    var dotBaseSpeed = 0.5
+    var canvas = document.createElement('canvas')
+    var ctx = canvas.getContext('2d')
+    var cHeight = window.innerHeight
+    var cWidth = window.innerWidth
+    var bgColor = '#FAFAFA'
+    var dotColor = '#EEE'
+    var dotBaseRadius = 6
+    var maxLineLength = cWidth > cHeight ? cWidth * 0.28 : cHeight * 0.28
+    var requestAnimationFrame
+
+    function initRequestAnimationFrame() {
+      var vendor = ['', 'ms', 'moz', 'webkit', 'o']
+
+      for (var i = 0; i < vendor.length && !window.requestAnimationFrame; i++) {
+        window.requestAnimationFrame = window[vendor[i] + 'RequestAnimationFrame']
+      }
+
+      requestAnimationFrame = window.requestAnimationFrame
+
+      return typeof requestAnimationFrame === 'function' ? true : false
+    }    
+
+    function initCanvas() {
+      var canvasStyle = {
+        top: 0,
+        left: 0,
+        position: 'fixed',
+        zIndex: -1
+      }
+
+      for (var pro in canvasStyle) {
+        canvas.style[pro] = canvasStyle[pro]
+      }
+
+      canvas.width = cWidth
+      canvas.height = cHeight
+
+      document.body.appendChild(canvas)
+    }
+
+    function initDots() {
+      for (var i = 0; i < dotCount; i++) {
+        dots.push(newDot())
+      }
+    }
+
+    function init() {
+      if (!initRequestAnimationFrame()) return
+      initCanvas()
+      initDots()
+      drawDots()
+    }
+
+    function newDot() {
+      return {
+        x: random(0, cWidth),
+        y: random(0, cHeight),
+        radius: random(dotBaseRadius * 0.5, dotBaseRadius),
+        xSpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed),
+        ySpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed)
+      }
+    }
+
+    function moveDots() {
+      for (var i = 0; i < dotCount; i++) {
+        var speedX = (dots[i].x + dots[i].xSpeed) % cWidth 
+        var speedY = (dots[i].y + dots[i].ySpeed) % cHeight
+        dots[i].x = speedX >= 0 ? speedX : speedX + cWidth
+        dots[i].y = speedY >= 0 ? speedY : speedY + cHeight
+      }
+    }
+
+    function drawDots() {
+      ctx.fillStyle = bgColor
+      ctx.fillRect(0, 0, cWidth, cHeight)
+
+      for (var i = 0; i < dotCount; i++) {
+        ctx.beginPath()
+        ctx.arc(dots[i].x, dots[i].y, dots[i].radius, 0, 2 * Math.PI, false)
+        ctx.fillStyle = dotColor
+        ctx.fill()
+
+        for (var j = i + 1; j < dotCount; j++) {
+          if (Math.sqrt(Math.pow(dots[i].x - dots[j].x, 2) + Math.pow(dots[i].y - dots[j].y, 2)) < maxLineLength) {
+            ctx.beginPath()
+            ctx.strokeStyle = dotColor
+            ctx.moveTo(dots[i].x, dots[i].y)
+            ctx.lineTo(dots[j].x, dots[j].y)
+            ctx.stroke()
+          }
+        }
+      }
+  
+      moveDots()
+      requestAnimationFrame(drawDots)
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min
+    }
+
+    function randomPN() {
+      return Math.random() > 0.5 ? 1 : -1
+    }
+
+    window.addEventListener('DOMContentLoaded', init,false)
+  }())
+</script>
