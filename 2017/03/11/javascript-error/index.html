@@ -72,8 +72,8 @@
 <p>比如说参数错误，我们可以指定<code>name</code>为<code>ArgumentError</code>，并且在<code>message</code>中说明哪个参数错误以及正确的参数形式</p>
 <p>如果你要把底层产生的错误传递给调用者，可以包装一下。比如说我们连接第三方网络错误时出现了错误。如果你直接把底层抛出的错误传递给调用者，那么你会得到这个<code>connect ECONNREFUSED</code>。<br>这样调用者即使捕获了也不清楚具体是啥错误，因此你应该考虑包装一下，在每一层添加一些关于当层有用的信息。让最终信息变成下面这个样子</p>
 <pre><code>myserver: failed to start up: failed to load configuration: failed to connect to database server: failed to connect to 127.0.0.1 port 1234: connect ECONNREFUSED。
-</code></pre><p>其实这个多少也和node本身错误处理信息不足有关，看看这个<a href="https://github.com/joyent/node/issues/7005" target="_blank" rel="external">issue</a>和这个<a href="https://github.com/joyent/node/issues/7804" target="_blank" rel="external">issue</a>。</p>
-<p>参考文章：<br><a href="http://code.oneapm.com/nodejs/2015/04/13/nodejs-errorhandling/" target="_blank" rel="external">NodeJS错误处理最佳实践</a><br><a href="https://softwareengineering.stackexchange.com/questions/64926/should-a-method-validate-its-parameters" target="_blank" rel="external">Should a method validate its parameters</a><br><a href="https://www.zhihu.com/question/56302552" target="_blank" rel="external">js的方法需要检查吗，检查原则是什么样的？</a></p>
+</code></pre><p>其实这个多少也和node本身错误处理信息不足有关，看看这个<a href="https://github.com/joyent/node/issues/7005" target="_blank" rel="noopener">issue</a>和这个<a href="https://github.com/joyent/node/issues/7804" target="_blank" rel="noopener">issue</a>。</p>
+<p>参考文章：<br><a href="http://code.oneapm.com/nodejs/2015/04/13/nodejs-errorhandling/" target="_blank" rel="noopener">NodeJS错误处理最佳实践</a><br><a href="https://softwareengineering.stackexchange.com/questions/64926/should-a-method-validate-its-parameters" target="_blank" rel="noopener">Should a method validate its parameters</a><br><a href="https://www.zhihu.com/question/56302552" target="_blank" rel="noopener">js的方法需要检查吗，检查原则是什么样的？</a></p>
 
   </article>
 </section></section>

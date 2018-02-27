@@ -137,7 +137,7 @@ Sun, 11 Dec 2016 13:15:00 MDT    # 822标准
 <li><code>Date(year, month[, date[, hours[, minutes[, seconds[, milliseconds]]]]])</code>，它能够自动修正不正确的数字，比如你传了一个2016年13月1日，它会解析成2017年1月1日。只有<code>year</code>和<code>month</code>是必须的，后面的参数如果没有给出默认设置成1(日期)或者0(时间)。<code>Date.UTC</code>接收的参数和这个一样，返回的是毫秒时间戳。</li>
 </ul>
 <p>我们看看第二种类型。一般来说，如果传入的字符串不包含时区信息的话，它会默认时区为当前计算机所设置的时区。但是如果是<code>2016-01-01</code>这种格式的日期，则会使用GMT时区。</p>
-<p>但是文档上都<strong>强烈</strong>不建议直接使用字符串进行实例化，因为不同的浏览器上的实现会有偏差，可能无法得到一致的结果。有一篇外国友人进行的<a href="http://dygraphs.com/date-formats.html" target="_blank" rel="external">测试</a>，列出了每个浏览器支持哪些形式的字符串解析，虽然是2012年的老文章，用例有点过时，不过仍然值得一看。</p>
+<p>但是文档上都<strong>强烈</strong>不建议直接使用字符串进行实例化，因为不同的浏览器上的实现会有偏差，可能无法得到一致的结果。有一篇外国友人进行的<a href="http://dygraphs.com/date-formats.html" target="_blank" rel="noopener">测试</a>，列出了每个浏览器支持哪些形式的字符串解析，虽然是2012年的老文章，用例有点过时，不过仍然值得一看。</p>
 <p>然后<code>set</code>开头的这类方法里面是没有设置时区这个方法的。虽然有获取时区的方法，但是没有设置时区的方法 :(</p>
 <h2 id="格式化输出"><a href="#格式化输出" class="headerlink" title="格式化输出"></a>格式化输出</h2><p>大部分<code>get</code>开头的方法都是返回的是对应的本地时间的数值。而<code>getUTC</code>开头的顾名思义就是对应的UTC的数值。</p>
 <p><code>Date</code>对象是没有提供自定义格式化输出的，所以如果要实现自定义格式化输出，只有自己实现。</p>
@@ -153,7 +153,7 @@ Sun, 11 Dec 2016 13:15:00 MDT    # 822标准
 <p><code>Date.parse</code>：接受字符串，返回字符串所表示时间的时间戳。文档上也同样<strong>强烈</strong>不建议使用使用这个方法。</p>
 <p><code>Date.UTC</code>：和上面说的实例化对象第三种方式接受的字符串相同。唯一不同的是，实例化时时区是参考当前计算机的时区，而这个会使用GMT时区。</p>
 <p>需要注意的是，实例方法中所有包含milliseconds的方法，都只是表示当前时刻的毫秒数，数值范围是0-999。如果想获取对象所代表的时间戳的话，使用<code>valueOf</code>方法即可。</p>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://tools.ietf.org/html/rfc822#section-5.1" target="_blank" rel="external">RFC 822</a><br><a href="https://www.ietf.org/rfc/rfc2822.txt" target="_blank" rel="external">RFC 2822</a><br><a href="https://tools.ietf.org/html/rfc1123" target="_blank" rel="external">RFC 1123</a><br><a href="https://en.wikipedia.org/wiki/ISO_8601" target="_blank" rel="external">ISO 8601 - Wikipedia</a><br><a href="https://www.timeanddate.com/time/utc-abbreviation.html" target="_blank" rel="external">Why is it Called UTC - not CUT</a><br><a href="https://www.timeanddate.com/time/gmt-utc-time.html" target="_blank" rel="external">The Difference Between GMT and UTC</a><br><a href="https://www.timeanddate.com/time/dst/" target="_blank" rel="external">Daylight Saving Time</a><br><a href="https://my.oschina.net/knightuniverse/blog/133483" target="_blank" rel="external">CET,UTC,GMT,CST几种常见时间概述</a></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://tools.ietf.org/html/rfc822#section-5.1" target="_blank" rel="noopener">RFC 822</a><br><a href="https://www.ietf.org/rfc/rfc2822.txt" target="_blank" rel="noopener">RFC 2822</a><br><a href="https://tools.ietf.org/html/rfc1123" target="_blank" rel="noopener">RFC 1123</a><br><a href="https://en.wikipedia.org/wiki/ISO_8601" target="_blank" rel="noopener">ISO 8601 - Wikipedia</a><br><a href="https://www.timeanddate.com/time/utc-abbreviation.html" target="_blank" rel="noopener">Why is it Called UTC - not CUT</a><br><a href="https://www.timeanddate.com/time/gmt-utc-time.html" target="_blank" rel="noopener">The Difference Between GMT and UTC</a><br><a href="https://www.timeanddate.com/time/dst/" target="_blank" rel="noopener">Daylight Saving Time</a><br><a href="https://my.oschina.net/knightuniverse/blog/133483" target="_blank" rel="noopener">CET,UTC,GMT,CST几种常见时间概述</a></p>
 
   </article>
 </section></section>
