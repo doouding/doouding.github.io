@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <title>z-index层叠顺序小小的分析</title>
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="page">
+  <header class="header">
+  <a class="home nav" href="https://codertx.github.io">home.</a>
+  
+</header>
+  <div class="container">
+    <section class="main"><section class="article-entry">
+  <div class="date">April 3rd, 2016</div>
+  <h1 class="article-title">z-index层叠顺序小小的分析</h1>
+  <article class="article">
+  <p>下文如果没有特别说明，<code>static</code>元素指的就是设置<code>postion:static</code>的元素或者没有设置<code>position</code>的元素。设置了<code>position</code>的元素指的是设置了除<code>static</code>以外值的元素</p>
+<h2 id="默认规则"><a href="#默认规则" class="headerlink" title="默认规则"></a>默认规则</h2><p>如果不对节点设置<code>position</code>属性，文档流后面的元素会遮挡住前面的元素。同时对<code>static</code>元素设置<code>z-index</code>没有任何效果。对已经设置了<code>position</code>定位规则，如果没有设置<code>z-index</code>则后面的元素仍然会遮住前面的元素。<br>设置<code>postion:static</code>和没有设置是一个效果，元素设置<code>position</code>为<code>static</code>以外的任何值的元素，会遮住<code>static</code>元素。如果不想让其遮挡住<code>static</code>元素，可以将<code>z-index</code>设置为<code>-1</code></p>
+<h2 id="从父规则"><a href="#从父规则" class="headerlink" title="从父规则"></a>从父规则</h2><p>对于设置了<code>position</code>的元素来说，A节点的<code>z-index</code>比B节点大或者A节点和B节点一样大且但A在B的后面，那么A的子节点一定会覆盖在B的前面。因为它的父节点就在B前面所以子节点跟随父元素的安排<br>非常值得注意的是，从父规则仅在显示设置了<code>z-index</code>的节点上有效，并且<code>position</code>不为<code>static</code></p>
+<h2 id="参与规则"><a href="#参与规则" class="headerlink" title="参与规则"></a>参与规则</h2><p><code>z-index</code>值越大，则显示越靠前。将<code>z-index</code>设置为<code>0</code>与不设置<code>z-index</code>属性没有区别。<br>两个元素<code>z-index</code>设置为同一个值，后面的元素会遮挡住前面的规则。在这种情况下，即使前面的元素的子元素<code>z-index</code>较大，它也会被后面的元素遮挡住。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"a"</span> <span class="attr">style</span>=<span class="string">"position:relative;z-index:0;"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"a-1"</span> <span class="attr">style</span>=<span class="string">"position:relative;z-index:2;"</span>&gt;</span>A-1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"b"</span> <span class="attr">style</span>=<span class="string">"position:relative;z-index:0;"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"b-1"</span> <span class="attr">style</span>=<span class="string">"position:relative;z-index:1;"</span>&gt;</span>B-1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上述代码效果如下<br><img src="/images/1461304407837_2.png" alt=""></p>
+<h2 id="层级树规则"><a href="#层级树规则" class="headerlink" title="层级树规则"></a>层级树规则</h2><p>有了前面例子的铺垫，我们在这里引入一个层级树概念，当元素设置了<code>position</code>属性，并且<code>z-index</code>给了具体赋值，那么这个元素会被放入一个层级树中，通过比较<code>z-index</code>来决定显示顺序的先后，我们来看一个代码<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"a"</span> <span class="attr">style</span>=<span class="string">"position:relative;z-index:2;"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"a-1"</span> <span class="attr">style</span>=<span class="string">"position:relative;z-index:0;"</span>&gt;</span>A-1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"b"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"b-1"</span> <span class="attr">style</span>=<span class="string">"position:relative;z-index:1;"</span>&gt;</span>B-1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>上述代码效果如下<br><img src="/images/1461304409009_3.png" alt=""><br>层级树图表示如下<br><img src="/images/1461304409059_4.png" alt=""><br>图中虽然 A-1<code>(z-index:0)</code>的值比 B-1<code>(z-index:1)</code>小, 但因为在层级树里 A<code>(z-index:2)</code> 和 B-1 在一个层级, 而 A 的值比 B-1 大, 根据从父规则, A-1 显示在 B-1 前面.</p>
+<h2 id="参与规则2"><a href="#参与规则2" class="headerlink" title="参与规则2"></a>参与规则2</h2><p>如果父元素设置了<code>position</code>而没有设置<code>z-index</code>，那么他们的子元素会按照各自<code>z-index</code>来进行排列，父元素的排列先后顺序不再对子元素产生影响。但是在IE6和IE7中，如果没有设置<code>z-index</code>的值，那么默认会设置<code>z-index</code>为0。所以在IE6和IE7中，还是会先按父元素的顺序排列。<br>与这种情况类似的是，如果父元素没有设置<code>position</code>属性，那么他们的子元素也会按照各自的<code>z-index</code>来排列。</p>
+<p>##浮动元素</p>
+<p>浮动元素会遮住<code>static</code>元素，但是会被设置了<code>position</code>的元素遮住。并且对浮动元素设置<code>z-index</code>没有任何效果。如果不想后面设置了<code>position</code>的元素遮挡住浮动元素，可以将后面的元素设置为<code>z-index:-1</code></p>
+<p>参考文章：<br><a href="http://www.neoease.com/css-z-index-property-and-layering-tree/" target="_blank" rel="noopener">CSS z-index 属性的使用方法和层级树的概念</a></p>
+
+  </article>
+</section></section>
+  </div>
+  <footer class="footer">
+  <span class="text">Powered by </span>
+  <a href="https://hexo.io/" target="_blank">Hexo</a>
+  <span> & Theme by</span>
+  <a href="https://github.com/codertx/hexo-theme-lightit" target="_blank">lightit</a>
+</footer>
+</body>
+<script>
+  (function(){
+    var dotCount = 20
+    var dots = []
+    var dotBaseSpeed = 0.5
+    var canvas = document.createElement('canvas')
+    var ctx = canvas.getContext('2d')
+    var cHeight = window.innerHeight
+    var cWidth = window.innerWidth
+    var bgColor = '#FAFAFA'
+    var dotColor = '#EEE'
+    var dotBaseRadius = 6
+    var maxLineLength = cWidth > cHeight ? cWidth * 0.28 : cHeight * 0.28
+    var requestAnimationFrame
+
+    function initRequestAnimationFrame() {
+      var vendor = ['', 'ms', 'moz', 'webkit', 'o']
+
+      for (var i = 0; i < vendor.length && !window.requestAnimationFrame; i++) {
+        window.requestAnimationFrame = window[vendor[i] + 'RequestAnimationFrame']
+      }
+
+      requestAnimationFrame = window.requestAnimationFrame
+
+      return typeof requestAnimationFrame === 'function' ? true : false
+    }    
+
+    function initCanvas() {
+      var canvasStyle = {
+        top: 0,
+        left: 0,
+        position: 'fixed',
+        zIndex: -1
+      }
+
+      for (var pro in canvasStyle) {
+        canvas.style[pro] = canvasStyle[pro]
+      }
+
+      canvas.width = cWidth
+      canvas.height = cHeight
+
+      document.body.appendChild(canvas)
+    }
+
+    function initDots() {
+      for (var i = 0; i < dotCount; i++) {
+        dots.push(newDot())
+      }
+    }
+
+    function init() {
+      if (!initRequestAnimationFrame()) return
+      initCanvas()
+      initDots()
+      drawDots()
+    }
+
+    function newDot() {
+      return {
+        x: random(0, cWidth),
+        y: random(0, cHeight),
+        radius: random(dotBaseRadius * 0.5, dotBaseRadius),
+        xSpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed),
+        ySpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed)
+      }
+    }
+
+    function moveDots() {
+      for (var i = 0; i < dotCount; i++) {
+        var speedX = (dots[i].x + dots[i].xSpeed) % cWidth 
+        var speedY = (dots[i].y + dots[i].ySpeed) % cHeight
+        dots[i].x = speedX >= 0 ? speedX : speedX + cWidth
+        dots[i].y = speedY >= 0 ? speedY : speedY + cHeight
+      }
+    }
+
+    function drawDots() {
+      ctx.fillStyle = bgColor
+      ctx.fillRect(0, 0, cWidth, cHeight)
+
+      for (var i = 0; i < dotCount; i++) {
+        ctx.beginPath()
+        ctx.arc(dots[i].x, dots[i].y, dots[i].radius, 0, 2 * Math.PI, false)
+        ctx.fillStyle = dotColor
+        ctx.fill()
+
+        for (var j = i + 1; j < dotCount; j++) {
+          if (Math.sqrt(Math.pow(dots[i].x - dots[j].x, 2) + Math.pow(dots[i].y - dots[j].y, 2)) < maxLineLength) {
+            ctx.beginPath()
+            ctx.strokeStyle = dotColor
+            ctx.moveTo(dots[i].x, dots[i].y)
+            ctx.lineTo(dots[j].x, dots[j].y)
+            ctx.stroke()
+          }
+        }
+      }
+  
+      moveDots()
+      requestAnimationFrame(drawDots)
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min
+    }
+
+    function randomPN() {
+      return Math.random() > 0.5 ? 1 : -1
+    }
+
+    window.addEventListener('DOMContentLoaded', init,false)
+  }())
+</script>
