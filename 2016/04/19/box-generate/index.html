@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <title>视觉格式化模型</title>
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="page">
+  <header class="header">
+  <a class="home nav" href="https://codertx.github.io">home.</a>
+  
+</header>
+  <div class="container">
+    <section class="main"><section class="article-entry">
+  <div class="date">April 19th, 2016</div>
+  <h1 class="article-title">视觉格式化模型</h1>
+  <article class="article">
+  <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>我们可以把网页中的每个元素看作一个盒，所谓的页面的布局就是把每个盒按照一定规则排列起来最终形成页面。</p>
+<p>CSS 视觉格式化模型的一部分工作是从文档元素生成盒。生成盒拥有不同类型，并对视觉格式化模型的处理产生影响。生成盒的类型取决于 CSS 属性。</p>
+<h2 id="一些通用概念"><a href="#一些通用概念" class="headerlink" title="一些通用概念"></a>一些通用概念</h2><p><strong>包含块（containing blocks）</strong></p>
+<ul>
+<li>许多盒子的位置和大小都是依据一个名为<strong>包含块</strong>的盒子确定的</li>
+<li>一般来说生成盒会作为器后代的<strong>包含块</strong>，我们称盒其后代”创建”了包含块</li>
+<li><p>我们所说的”一个盒的<strong>包含块</strong>“指的是它所处的包含块，而不是指它生成的包含块</p>
+<blockquote>
+<p>原文引用</p>
+<p>The phrase “a box’s containg block” means “the containing block in which the box lives” not the one it generates </p>
+</blockquote>
+</li>
+</ul>
+<p><strong>替换元素</strong></p>
+<p>替换元素是指那些元素本身会被其他内容替换掉的元素。比如说<code>image</code>元素，它在渲染时会被图片替换掉。<code>canvas</code>在渲染时会被一个画布替换掉。<code>video</code>元素会被一个视频播放器替换掉。</p>
+<h2 id="块的布局方式"><a href="#块的布局方式" class="headerlink" title="块的布局方式"></a>块的布局方式</h2><p>我们刚学习CSS的时候，大部分教程上面会说CSS有两种类型的元素。一种是块级元素，比如<code>div</code>、<code>p</code>等等。还有一种是内联元素，比如<code>span</code>、<code>a</code>等等。两种元素的布局方式是不一样的，我们先看一下块级元素的布局方式。</p>
+<h3 id="块的相关概念"><a href="#块的相关概念" class="headerlink" title="块的相关概念"></a>块的相关概念</h3><ul>
+<li>块级元素（block-level element）的概念：常见的块级元素有<code>div</code>、<code>h123</code>、<code>p</code>等等。更准确的描述是<code>display</code>属性为<code>block</code>，<code>list-item</code>或<code>table</code>的元素。块级元素视觉上呈现为块，竖直排列。</li>
+<li>块级盒（block-level box）的概念：块级盒用于描述它与父元素和同级元素之间的视觉表现。每个块级元素都会生成一个至少一个块级盒（<code>li</code>元素会生成两个），但是每个元素都只会生成一个主要块级盒（principal block-level box）用于包含其子元素盒生成的内容。<strong>任何定位方案都与这个主要块级盒有关</strong>。块级盒会参与块格式化上下文（block formatting context）（即传说中的BFC）</li>
+<li>块容器盒（block container box）的概念：块容器盒用于描述跟它后代之间的视觉表现。除了<code>table</code>元素创建的盒和可替换元素（比如<code>canvas</code>，<code>video</code>），其他任意元素生成的块级盒也是一个块容器盒，这个盒也称为块盒。一个块容器盒要么只包含块级盒，要么创建一个行格式化上下文（后面回谈论到）从而只包含行内级盒。<br>下图三个概念之间的关系表示：<br><img src="/images/1463726349982_4.png" alt=""></li>
+</ul>
+<h3 id="匿名块盒（Anonymous-block-boxes）"><a href="#匿名块盒（Anonymous-block-boxes）" class="headerlink" title="匿名块盒（Anonymous block boxes）"></a>匿名块盒（Anonymous block boxes）</h3><p>块容器盒要么只包含行内级盒（后面讨论行内联相关的概念），要么只包含块级盒（block-level box）。但通常情况下会包含两者，这个时候就会创建匿名块盒，让我们看看下面的代码。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    Some inline text </span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>followed by a paragraph<span class="tag">&lt;/<span class="name">p</span>&gt;</span> </span><br><span class="line">    followed by more inline text.</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>首先是最外层的<code>div</code>元素，是一个块级元素，会创建一个块级盒。同时这个块级盒也是一个块容器盒，会包含元素的内容。</li>
+<li>中间的<code>p</code>元素也是个块级元素，所以<code>p</code>元素会创建一个块级盒。</li>
+<li><code>p</code>元素前后有两个没有任何元素包裹的文字。由于我们刚才说过，块容器盒要么只包含块级盒，要么只包含行内级盒，由于我们这里的<code>p</code>元素已经生成了一个块级盒，所以<code>p</code>前后两句的两句文字会生成两个匿名块盒包含他们。</li>
+<li>匿名块盒不能被选中设置样式，它们只能从父级元素继承样式。<br>最终生成的盒如下图所示<br><img src="/images/1463726345438_2.png" alt=""></li>
+</ol>
+<h3 id="块格式化上下文（block-formatting-context）"><a href="#块格式化上下文（block-formatting-context）" class="headerlink" title="块格式化上下文（block formatting context）"></a>块格式化上下文（block formatting context）</h3><p>简称BFC，BFC就是规定块盒在页面中如何布局，可以是CSS布局的地基，并非什么很特殊的概念。BFC有以下规定：</p>
+<ul>
+<li>块级盒一个一个从上往下垂直排列</li>
+<li>块级盒垂直方向的边距距离由<code>margin</code>决定。属于同一个BFC的两个相邻的块级盒的<code>margin</code>会发生重叠</li>
+<li>每个元素的margin box的左边与包含块的border box的左边相接触，同样对于右边也是。</li>
+<li>BFC的区域不会与float box重叠（利用这个特性，我们可以做自适应元素大小）</li>
+<li>BFC就是页面上的一个隔离的独立容器，容器里面的元素布局不会影响到容器外的元素。</li>
+<li>计算BFC的高度时，浮动元素也参与计算（清除浮动的原理）</li>
+<li>以下元素会产生BFC<ul>
+<li>根元素</li>
+<li><code>float</code>属性不为<code>none</code>的元素</li>
+<li><code>position</code>为<code>absolute</code>或者<code>fixed</code></li>
+<li><code>display</code>为<code>inline-block</code>、<code>table-cell</code>、<code>table-caption</code>、<code>flex</code>、<code>inline-flex</code>的元素</li>
+<li><code>overflow</code>不为<code>visible</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="内联元素的布局方式"><a href="#内联元素的布局方式" class="headerlink" title="内联元素的布局方式"></a>内联元素的布局方式</h2><p>前面我们说了块级元素的布局方式，现在我们来看看内联元素比如<code>span</code>、<code>a</code>的布局方式。</p>
+<h3 id="内联的相关概念"><a href="#内联的相关概念" class="headerlink" title="内联的相关概念"></a>内联的相关概念</h3><ul>
+<li>行内级元素（inline-level element）：当元素的<code>display</code>属性为<code>inline</code>、<code>inline-block</code>、<code>inline-table</code>时，它就是行内级元素</li>
+<li>行内级盒（inline-level box）：行内级元素会生成行内级盒，它参与行内格式化上下文。同时行内级盒还有<strong>行内盒</strong>和<strong>原子行内级盒</strong>两种，我们在下面解释。</li>
+<li>行内盒（inline box）：如果行内级盒的内容会参与盒本身的行内格式化上下文，那么这个行内级盒也称为行内盒。<code>display:inline</code>的非替换元素生成的盒就是行内盒。</li>
+<li>原子行内级盒（atomic inline-level box）的概念：如果行内级盒的内容本身不参与盒本身的行内格式化上下文，那么这些行内级盒就称为原子行内级。可替换行内元素（比如<code>image</code>）或<code>display</code>为<code>inline-block</code>或<code>inline-table</code>生成的行内级盒就是原子行内级盒。<br>上面这些概念关系如下图：<br><img src="/images/1463726347960_3.png" alt=""></li>
+<li>行盒（line boxes）:能把同一行上的行内级盒都包含进去的矩形区域称为行盒，行盒由行内格式化上下文（inline formatting context）产生。在块盒里面，行盒从块盒的一边排版到另一边。当有浮动元素时，行盒从向左浮动元素的右边缘排版到向右浮动元素的左边缘。</li>
+<li>匿名行内盒（anonymous inline boxes）：当文字没有被行内元素包裹时，就回为这段文字生成匿名行内盒</li>
+</ul>
+<h3 id="行内格式化上下文（inline-formatting-context）"><a href="#行内格式化上下文（inline-formatting-context）" class="headerlink" title="行内格式化上下文（inline formatting context）"></a>行内格式化上下文（inline formatting context）</h3><p>简称IFC，IFC规定了行内级盒该按照什么规则排列。当下面这些情况出现时，会产生IFC：</p>
+<ul>
+<li>块容器盒中只有行内级元素时会产生IFC</li>
+<li>匿名行内盒中会建立IFC<br>IFC包含以下规定：</li>
+<li>行盒的宽度是由包含块盒存在的浮动元素来决定的，一般来说行盒的宽度就是包含块的宽度，但是浮动框可以插在行盒和包含块之间，因此行盒的宽度可能由于 浮动造成的可用空间会变小 而有所改变。</li>
+<li>行盒一定会高到足以容纳所有盒，但也可能比它所包含的最高框还要搞（比如这些框是由基线对齐）。</li>
+<li>当一个盒的高度小于包含它的行盒的高度，它在行盒中的垂直位置由<code>vertical-align</code>属性决定。后面详细说明高度的计算方式。</li>
+<li>当几个行内级盒在水平方向上无法塞进同一个行盒里面时，它们会被拆分后分布在两个或者多个行盒中。行盒之间会以没有垂直间距也没有重叠的方式堆叠起来。</li>
+<li>当一个行内级盒的总宽度小于包含他们的行盒的宽度，则他们在行盒的水平分布由<code>text-align</code>属性来决定，如果该属性为<code>justify</code>，则用户代理可以拉伸行内级盒中的空格和字间距（该盒不能是原子行内级盒）。</li>
+<li>当一个行内级盒的宽度超过了行框的宽度，那么它会被分成几个盒，这几个盒会分布在几个行盒，如果该行内级盒不可分割（当个字符、或语言指定的文字打断规则不允许出现打断时），那么该行内级盒会溢出行盒。</li>
+<li>行内级盒被分割的时候，外边距、边框和内边距在出现分割的地方都没有视觉效果</li>
+<li>行盒如果同时满足以下条件，会以零高度来对待<ul>
+<li>不包含文本或保留空格</li>
+<li>不包含内外边距或边框宽度非零的行内元素</li>
+<li>不包含其他正常排版内容（<code>image</code>、<code>inline-block</code>、<code>inline-table</code>）</li>
+<li>不以保留的换行符结尾</li>
+</ul>
+</li>
+</ul>
+<h3 id="行高的计算"><a href="#行高的计算" class="headerlink" title="行高的计算"></a>行高的计算</h3><ol>
+<li>计算行盒里每个行内级盒的高度。对于替换元素、<code>inline-block</code>元素、<code>inline-table</code>元素来说，高度是边界的高度。对于行内盒来说，高度由<code>line-height</code>属性决定。</li>
+<li>行内级元素根据其<code>vertical-align</code>属性对齐。在这些盒使用<code>top</code>或<code>bottom</code>对齐的情况下，浏览器在对齐它们的时候必须使得行盒的高度尽可能的小。若这些盒足够高，则存在多个方案，同时CSS 2.1不会定义行盒的基线的位置。</li>
+<li>行盒的高是盒最顶端和最底端之间的距离</li>
+</ol>
+
+  </article>
+</section></section>
+  </div>
+  <footer class="footer">
+  <span class="text">Powered by </span>
+  <a href="https://hexo.io/" target="_blank">Hexo</a>
+  <span> & Theme by</span>
+  <a href="https://github.com/codertx/hexo-theme-lightit" target="_blank">lightit</a>
+</footer>
+</body>
+<script>
+  (function(){
+    var dotCount = 20
+    var dots = []
+    var dotBaseSpeed = 0.5
+    var canvas = document.createElement('canvas')
+    var ctx = canvas.getContext('2d')
+    var cHeight = window.innerHeight
+    var cWidth = window.innerWidth
+    var bgColor = '#FAFAFA'
+    var dotColor = '#EEE'
+    var dotBaseRadius = 6
+    var maxLineLength = cWidth > cHeight ? cWidth * 0.28 : cHeight * 0.28
+    var requestAnimationFrame
+
+    function initRequestAnimationFrame() {
+      var vendor = ['', 'ms', 'moz', 'webkit', 'o']
+
+      for (var i = 0; i < vendor.length && !window.requestAnimationFrame; i++) {
+        window.requestAnimationFrame = window[vendor[i] + 'RequestAnimationFrame']
+      }
+
+      requestAnimationFrame = window.requestAnimationFrame
+
+      return typeof requestAnimationFrame === 'function' ? true : false
+    }    
+
+    function initCanvas() {
+      var canvasStyle = {
+        top: 0,
+        left: 0,
+        position: 'fixed',
+        zIndex: -1
+      }
+
+      for (var pro in canvasStyle) {
+        canvas.style[pro] = canvasStyle[pro]
+      }
+
+      canvas.width = cWidth
+      canvas.height = cHeight
+
+      document.body.appendChild(canvas)
+    }
+
+    function initDots() {
+      for (var i = 0; i < dotCount; i++) {
+        dots.push(newDot())
+      }
+    }
+
+    function init() {
+      if (!initRequestAnimationFrame()) return
+      initCanvas()
+      initDots()
+      drawDots()
+    }
+
+    function newDot() {
+      return {
+        x: random(0, cWidth),
+        y: random(0, cHeight),
+        radius: random(dotBaseRadius * 0.5, dotBaseRadius),
+        xSpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed),
+        ySpeed: randomPN() * random(dotBaseSpeed * 0.5, dotBaseSpeed)
+      }
+    }
+
+    function moveDots() {
+      for (var i = 0; i < dotCount; i++) {
+        var speedX = (dots[i].x + dots[i].xSpeed) % cWidth 
+        var speedY = (dots[i].y + dots[i].ySpeed) % cHeight
+        dots[i].x = speedX >= 0 ? speedX : speedX + cWidth
+        dots[i].y = speedY >= 0 ? speedY : speedY + cHeight
+      }
+    }
+
+    function drawDots() {
+      ctx.fillStyle = bgColor
+      ctx.fillRect(0, 0, cWidth, cHeight)
+
+      for (var i = 0; i < dotCount; i++) {
+        ctx.beginPath()
+        ctx.arc(dots[i].x, dots[i].y, dots[i].radius, 0, 2 * Math.PI, false)
+        ctx.fillStyle = dotColor
+        ctx.fill()
+
+        for (var j = i + 1; j < dotCount; j++) {
+          if (Math.sqrt(Math.pow(dots[i].x - dots[j].x, 2) + Math.pow(dots[i].y - dots[j].y, 2)) < maxLineLength) {
+            ctx.beginPath()
+            ctx.strokeStyle = dotColor
+            ctx.moveTo(dots[i].x, dots[i].y)
+            ctx.lineTo(dots[j].x, dots[j].y)
+            ctx.stroke()
+          }
+        }
+      }
+  
+      moveDots()
+      requestAnimationFrame(drawDots)
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min
+    }
+
+    function randomPN() {
+      return Math.random() > 0.5 ? 1 : -1
+    }
+
+    window.addEventListener('DOMContentLoaded', init,false)
+  }())
+</script>
