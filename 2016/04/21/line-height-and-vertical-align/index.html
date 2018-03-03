@@ -22,16 +22,22 @@
   <article class="article">
   <p>我想吐嘈的是，W3C的标准不是一般的晦涩，特别是中文翻译，看了好几遍仍然搞不懂在说什么。只好硬着头皮去看英文。果然我还是太年轻了，看英文看得我递归懵逼。不过再看了几篇前辈的文章之后再回来看，感觉好像理解了一点了。我争取用比较易懂的语言描述一下<code>line-height</code>和<code>vertical-align</code>属性。</p>
 <p>阅读这篇文章之前需要对IFC、行内盒等相关知识点有一个概念。不然会一脸懵逼。</p>
-<h2 id="行盒的高度计算"><a href="#行盒的高度计算" class="headerlink" title="行盒的高度计算"></a>行盒的高度计算</h2><p><strong>行盒（line box）</strong>说白了就是用来包含视觉上一行文字的一个盒子。为什么说视觉上呢，因为如果一串文字太长了在浏览器里一行显示不下然后换行了，那么这就相当于有两个行盒存在了，因为这个时候有两行文字存在了。行盒是由<strong>行内格式化上下文（IFC）</strong>创建的，但一般我们不需要关注这些，因为浏览器会处理这些。我们需要关心的只是<strong>行盒（line box）</strong>的高度。</p>
+<h2 id="写这篇文章的目的"><a href="#写这篇文章的目的" class="headerlink" title="写这篇文章的目的"></a>写这篇文章的目的</h2><p>在写CSS的时候，经常会发现<code>vertical-align</code>这个属性没有预期中的使用效果。网上搜了以后会有一大堆解决方案，似乎也能实现期望中的效果。不过我还是想搞明白<code>vertical-align</code>的使用方式，所以有了这篇文章。</p>
+<p>这篇文章最后实际所讲的就是同一行的行内级元素要如何排列的问题。因此会引入一些CSS中的概念。</p>
+<h2 id="行盒的高度计算"><a href="#行盒的高度计算" class="headerlink" title="行盒的高度计算"></a>行盒的高度计算</h2><p><strong>行盒（line box）</strong>说白了就是用来包含视觉上一行文字的一个盒子。为什么说视觉上呢，因为如果一串文字太长了在浏览器里一行显示不下然后换行了，那么这就相当于有两个行盒存在了，因为这个时候有两行文字存在了。行盒是由<strong>行内格式化上下文（IFC）</strong>创建的，但一般我们不需要关注这些，因为浏览器会处理这些。我们需要关心的只是<strong>行盒（line box）</strong>的高度。只有行盒的高度确定了，我们才能确定行盒里面包含的盒的位置。</p>
 <p>行盒的高度计算步骤如下：</p>
 <ol>
 <li>计算行盒所包含的的所有<strong>行内级盒（inline-level box）</strong>对于<strong>行内盒（inline box）</strong>，它的高度就是line-height属性的高度。对于替换元素，或者<code>display</code>属性为<code>inline-block</code>和<code>inline-table</code>的元素，它的高度就是盒边界的高度（就是垂直方向上<code>margin</code> + <code>padding</code> + <code>content</code>的宽度总和）</li>
 <li>行内级元素根据其<code>vertical-align</code>属性对齐。</li>
-<li>如果<code>vertical-align</code>的值为<code>top</code>或<code>bottom</code>，那么行盒的高度在计算的时候应该尽可能小。</li>
-<li>行盒最终的高度取决于行盒内最高行内级盒的高度。</li>
+<li>一般来说行盒最终的高度取决于行盒内最高行内级盒的高度。</li>
 </ol>
-<h2 id="行距与半行距"><a href="#行距与半行距" class="headerlink" title="行距与半行距"></a>行距与半行距</h2><p><code>line-height</code>的高度包含字体的高度和行距的高度。我们用<code>AD</code>表示一个文字的高度<sup>[1]</sup>，用<code>L</code>表示行距。在CSS标准里面，有这样一个公式 <code>L = &#39;line-height&#39; - AD</code>。也就是行距等于<code>line-height</code>的高度减去字体的高度。这样就能够得到行距的大小。行距一分为二，一半加在<code>A</code>上面也就是基线上方，一半加在<code>D</code>上面也就是基线下方。因为行距被平均一分为二，所以在视觉表现上面看起来就和居中一样。所以<code>inline-height</code>也可以用于垂直居中。L也可以为负数，这样的效果就是上下同时减去相等的高度。</p>
-<p><span style="color: grey;font-size:14px">[1]：在字体系统中，A表示文字的高度，D表示文字的深度，通过A和D相加就能得到字体本身的高度，A和D交界处就是基线（baseline）的位置。我们不需要纠结A和D的概念，只需要知道A+D是文字的高度，以及文字的高度在基线处一分为二就是了<span></span></span></p>
+<h2 id="字体的相关知识"><a href="#字体的相关知识" class="headerlink" title="字体的相关知识"></a>字体的相关知识</h2><p>我们简单的介绍一点字体的相关知识。我们先来看一个图</p>
+<p><img src="/images/font.png" alt=""></p>
+<p>baseline是一个重要的概念，<code>vertical-align</code>很多值的位置都是依据这个baseline的位置而确定的。一个字体可以由高度和深度两个部分确定。高度就是ascender和baseline之间的长度，而深度则是baseline和descender之间的长度。高度和深度的交界处在baseline。我们后文会把高度称为A，把深度称为D。</p>
+<p>同时x-height也是一个重要的概念。x-height的高度就是baseline和x-height之间的长度。x-height是英文字体设计中的一个术语词，它的标准高是一个小写字母x的高度单位，详情可以看下<a href="https://zh.wikipedia.org/wiki/X%E5%AD%97%E9%AB%98" target="_blank" rel="noopener">维基百科：X字高</a></p>
+<h2 id="line-height是如何起作用的？"><a href="#line-height是如何起作用的？" class="headerlink" title="line-height是如何起作用的？"></a>line-height是如何起作用的？</h2><p>如果我们不设置<code>line-height</code>属性时，行内盒的高度就是字体的高度。字体越大时，行内盒的高度就越大。当<code>line-height</code>所设置的值高于字体的高度时，多出来的高度会一分为二，然后分别加在字体的高度上面和字体的深度下面。</p>
+<p>我们用<code>AD</code>表示一个文字的高度，用<code>L</code>表示多出来的距离。在CSS标准里面，有这样一个公式 <code>L = &#39;line-height&#39; - AD</code>。然后将L一分为二，一半加在<code>A</code>上面，一半加在<code>D</code>下面。因为L被平均一分为二分别加在上下方，所以在视觉表现上面看起来就和居中一样。所以<code>inline-height</code>经常被用于文字垂直居中。</p>
+<p>那个多出来的距离L我们就称它为行距，下图图中红色的线段即是行距。<br><img src="/images/line.png" alt=""><br>L的被一分为二后的长度我们称为半行距。所以其实行距就是前面一行D下面半行距加上后面一行A上面的半行距。</p>
 <h2 id="属性分析"><a href="#属性分析" class="headerlink" title="属性分析"></a>属性分析</h2><p>我们的前置概念介绍完了，所以现在开始真正的介绍<code>line-height</code>和<code>vertical-align</code>两个属性了。</p>
 <h3 id="line-height属性"><a href="#line-height属性" class="headerlink" title="line-height属性"></a>line-height属性</h3><p><code>line-height</code>属性有四种取值：</p>
 <ul>
@@ -45,11 +51,11 @@
 <p>对于<code>&lt;percentage&gt;</code>类型的值，子元素会直接继承父元素计算后的值<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"father"</span> <span class="attr">style</span>=<span class="string">"line-height:200%;font-size:15px"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">"child"</span> <span class="attr">style</span>=<span class="string">"font-size:18px"</span>&gt;</span>哈哈<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--父元素的行高实际值是 15 * 200% = 30px --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--子元素直接继承父元素计算后的值也就是30px --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <h3 id="vertical-align-属性"><a href="#vertical-align-属性" class="headerlink" title="vertical-align 属性"></a>vertical-align 属性</h3><p><code>vertical-align</code>用来设定行内级盒在行盒中的垂直位置。</p>
 <p>我们前面说过，行高是由行盒里面包含的最高的那个盒决定的。在CSS规范里面，这个最高的盒被称为”支撑（strut）”。我们不妨称它为支撑盒。</p>
-<p><code>vertical-align</code>有一个重要的特性，就是它有些取值最后计算出来的位置，都是相对于这个支撑盒而确定的。</p>
+<p><code>vertical-align</code>有一个重要的特性，就是它有些取值最终计算出来的位置，都是相对于这个支撑盒而确定的。</p>
 <p>以下取值是相对于支撑盒确定的：</p>
 <ul>
 <li><code>baseline</code>：默认值，将盒的基线与父盒的基线对齐。若盒没有基线，将底边界与父盒的基线对齐。</li>
-<li><code>middle</code>，将盒的垂直中心点与父盒的基线加半个父盒中字母「x」的高度<sup>[2]</sup>对齐</li>
+<li><code>middle</code>，将盒的垂直中心点与父盒的基线加半个父盒中字母「x-height」高度对齐</li>
 <li><code>sub</code>，将盒的基线下降到父盒下标的位置</li>
 <li><code>super</code>，将盒的基线上升到父盒上标的位置</li>
 <li><code>text-top</code>，将盒的顶边与父盒内容区域的顶边对齐</li>
@@ -59,10 +65,9 @@
 <p>下面这两个值是相对于行盒对齐的</p>
 </li>
 <li><code>top</code>：把元素顶端与行盒中最高元素的顶端对齐</li>
-<li><p><code>bottom</code>：把元素顶端与行盒中最低元素的顶端对齐</p>
-<p><span style="color: grey;font-size:14px">2：原文写的是x-height，x-height是英文字体设计中的一个术语词，它的标准高是一个小写字母x的高度单位，详情可以看下<a href="https://zh.wikipedia.org/wiki/X%E5%AD%97%E9%AB%98" target="_blank" rel="noopener">维基百科：X字高</a></span></p>
-</li>
+<li><code>bottom</code>：把元素顶端与行盒中最低元素的顶端对齐</li>
 </ul>
+<h3 id="基线的位置确定"><a href="#基线的位置确定" class="headerlink" title="基线的位置确定"></a>基线的位置确定</h3><p><code>vertical-line</code>中</p>
 
   </article>
 </section></section>

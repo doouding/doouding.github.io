@@ -77,7 +77,10 @@
 <h3 id="行内格式化上下文（inline-formatting-context）"><a href="#行内格式化上下文（inline-formatting-context）" class="headerlink" title="行内格式化上下文（inline formatting context）"></a>行内格式化上下文（inline formatting context）</h3><p>简称IFC，IFC规定了行内级盒该按照什么规则排列。当下面这些情况出现时，会产生IFC：</p>
 <ul>
 <li>块容器盒中只有行内级元素时会产生IFC</li>
-<li>匿名行内盒中会建立IFC<br>·<br>IFC包含以下规定：</li>
+<li>匿名行内盒中会建立IFC</li>
+</ul>
+<p>IFC包含以下规定：</p>
+<ul>
 <li>行盒的宽度是由包含块盒存在的浮动元素来决定的，一般来说行盒的宽度就是包含块的宽度，但是浮动框可以插在行盒和包含块之间，因此行盒的宽度可能由于 浮动造成的可用空间会变小 而有所改变。</li>
 <li>行盒一定会高到足以容纳所有盒，但也可能比它所包含的最高框还要搞（比如这些框是由基线对齐）。</li>
 <li>当一个盒的高度小于包含它的行盒的高度，它在行盒中的垂直位置由<code>vertical-align</code>属性决定。后面详细说明高度的计算方式。</li>
