@@ -1,0 +1,329 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="description"><meta name="keyword"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Linux 服务与自启动</title><link rel="shortcut icon" href="/images/avatar.png" type="image/x-icon"><link href="/styles/site.css" rel="stylesheet"></head><body><header class="container" id="header"><div class="header"><div class="header-left"><div class="avatar"><img src="/images/avatar.png"></div><div class="author"><div class="author-name"><a href="/">小新</a></div><div class="about-me">Live free or die</div></div></div><div class="header-right"><ul class="navigation"><li><a href="/archives">归档</a></li></ul></div><div class="about-me-mask"><div class="about-me-wrap"><div class="about-me__header"><div class="avatar"><img src="/images/avatar.png"></div></div><ul class="socials"><li class="social-item"><span class="label"><img src="/images/socials/github.svg" alt="https://github.com/codertx"></span><a href="https://github.com/codertx" target="_blank" title="https://github.com/codertx">https://github.com/codertx</a></li><li class="social-item"><span class="label"><img src="/images/socials/email.svg" alt="codert.sn@gmail.com"></span><span>codert.sn@gmail.com</span></li></ul></div></div></div></header><div class="container post"><section class="article"><div class="title">Linux 服务与自启动</div><div class="date">写于2017年05月24日</div><div class="content"><p>尝试厘清一下如何在 Linux 中配置一个自启动的服务以及相关概念</p>
+<a id="more"></a>
+<h2 id="后台程序"><a href="#后台程序" class="headerlink" title="后台程序"></a>后台程序</h2><p>自动启动不免涉及到后台程序</p>
+<h3 id="后台执行与暂停"><a href="#后台执行与暂停" class="headerlink" title="后台执行与暂停"></a>后台执行与暂停</h3><p>我们如果希望一个前台程序切换到后台暂停，那么可以使用快捷键<code>Ctrl + Z</code>来使当前执行的任务切换到后台暂停运行。<br>如果想让一个命令在后台执行，可以在后面添加一个<code>&amp;</code>符号。这样子他就会在后台慢慢执行，执行完成后会有一个提示信息。例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sslocal -c /etc/shadowsocks.json &amp;</div></pre></td></tr></table></figure>
+<h3 id="后台操作"><a href="#后台操作" class="headerlink" title="后台操作"></a>后台操作</h3><p>切换到后台的任务可以通过<code>jobs</code>命令来查看。每个后台任务条目最前面有一个任务号，可以通过<code>fg %任务号</code>来使后台任务切换到前台。<br>我们刚刚说道<code>Ctrl + Z</code>是使程序到后台暂停。那么如果我想让它在后台执行需要怎么做呢？很简单，使用<code>bg %任务号</code>就能够使<code>Stopped</code>状态的后台程序变成<code>Running</code>状态</p>
+<h3 id="结束后台"><a href="#结束后台" class="headerlink" title="结束后台"></a>结束后台</h3><p>使用<code>kill</code>命令可以关闭一个后台工作。<code>kill -signal %工作号</code>，示例如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ kill -9 %2</div><div class="line">#关闭工作号2的工作，9表示强制结束一个工作</div><div class="line">$ kill -2 %3</div><div class="line">#2表示向任务输入Ctrl + c这个指令</div><div class="line">$ kill -15 %4</div><div class="line">#15表示以正常方式结束一个工作</div><div class="line">#更多signal有关的选项可以使用man 7 signal查看</div><div class="line">#kill后面不带百分号数字表示的是PID，带百分号数字表示是任务号</div></pre></td></tr></table></figure></p>
+<h3 id="脱机管理"><a href="#脱机管理" class="headerlink" title="脱机管理"></a>脱机管理</h3><p>不管任务是在前台还是切换到了后台，只要你把终端关闭了，任务就会终止。所以我们需要<code>nohup</code>这个命令，它使得任务和终端脱离关系。使用方法如下。该命令所有的输出将会输出到<code>nohup.out</code>文件中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ nohup sslocal -c /etc/shadowsocks.json &amp;</div></pre></td></tr></table></figure></p>
+<h2 id="System-V的服务管理"><a href="#System-V的服务管理" class="headerlink" title="System V的服务管理"></a>System V的服务管理</h2><blockquote>
+<p>注意：CentOS 7，Fedora 15等开始采用systemd来管理服务。抛弃了init管理的模式。</p>
+</blockquote>
+<p>以下内容来自于鸟哥的Linux私房菜旧版：<a href="http://linux.vbird.org/linux_basic/0560daemons/0560daemons-centos5.php" target="_blank" rel="external">初识系统服务</a>，新版加入了<code>Systemd</code>的管理方式所以对原本的<code>init</code>内容有所省略。</p>
+<p>System V采用<code>init</code>管理方式。系统第一个唤起的程序是<code>init</code>。然后这个<code>init</code>程序负责唤醒系统所需要的服务。<br>一般来说，所有的服务启动脚本通通都放在 <code>/etc/init.d/</code>底下。需要更改服务状态的时候也是通过这个方法。</p>
+<ul>
+<li>启动：<code>/etc/init.d/daemon start</code></li>
+<li>关闭：<code>/etc/init.d/daemon stop</code></li>
+<li>重新启动：<code>/etc/init.d/daemon restart</code></li>
+<li>状态观察：<code>/etc/init.d/deamon status</code></li>
+</ul>
+<p>同时还有一个<code>service</code>脚本能够完成同样的功能，<code>service daemon start</code>..等等，就不用输入前面那一串路径了。<br>服务B有时候会依赖服务A才能启动，如果服务A没有启动，<code>init</code>是无法帮忙启动A的，需要管理员自己分析依赖，然后手动处理。</p>
+<h3 id="daemon"><a href="#daemon" class="headerlink" title="daemon"></a>daemon</h3><p>系统为了某些功能需要提供一些服务（比如说计划任务）。这些服务实质也是由一些程序提供的，这些程序就称为<code>daemon</code>。一般可以把两个词同等看待。一般<code>daemon</code>程序后面有一个<code>d</code>，比如说<code>httpd</code>。<br>daemon有两个大类</p>
+<ul>
+<li><code>stand_alone</code>：这类服务是单独启动的，不需要其他程序管理。并且启动后就一直常驻内存。这类服务的特点就是相应速度极快。</li>
+<li><code>super daemon</code>：由特殊的<code>xinetd</code>或者<code>inetd</code>两个程序提供<code>socket</code>或者<code>port</code>对应的管理。当没有用户要求某socket或者port时，所需要的服务不会启动。若有用户要求时，<code>xinetd</code>会负责唤醒相应的服务来处理请求。服务在处理完请求以后就关闭，等到下次又有请求时又重新唤醒。所以这类服务的特点是：响应较慢、但不会长期占用系统资源。<br><code>super daemon</code>又分为以下两种<ul>
+<li>multi-threaded：可以并行处理多个请求。</li>
+<li>single-threaded：只能同时处理一个请求。</li>
+</ul>
+</li>
+</ul>
+<p>daemon工作方式有两种</p>
+<ul>
+<li><code>signal-control</code>：有用户端的请求过来时，就去处理。比如打印机服务</li>
+<li><code>interval-control</code>：每隔一段时间就主动去执行某项工作。比如计划任务</li>
+</ul>
+<h3 id="inittab文件"><a href="#inittab文件" class="headerlink" title="inittab文件"></a>inittab文件</h3><p><code>init</code>启动后会读取这个文件的内容。然后依次读取每条进行相应的处理。inittab文件定义了主要三种主要信息</p>
+<ul>
+<li>系统的默认运行等级</li>
+<li>如果他们终止了，哪些进程会启动，监视和重新启动</li>
+<li>当进入一个新的运行等级后，执行什么操作</li>
+</ul>
+<p>这个文件每行格式是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">id:rstate :action:process</div></pre></td></tr></table></figure></p>
+<ul>
+<li>id：是条目唯一标识符</li>
+<li>rstate：该条目匹配的运行等级</li>
+<li>action：定义如何运行这些命令</li>
+<li>process：定义要执行的命令<br></li>
+</ul>
+<p>rstate有以下这些类型</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">respawn</td>
+<td style="text-align:center">进程被终止时便立即重启。init不等待处理结束便继续后续操作</td>
+</tr>
+<tr>
+<td style="text-align:center">wait</td>
+<td style="text-align:center">在系统进入到指定的运行级别时便启动相应进程。init等待处理结束才继续后续操作</td>
+</tr>
+<tr>
+<td style="text-align:center">once</td>
+<td style="text-align:center">在系统进入到指定运行级别时便启动相应进程，但只有第一次进入该级别时才启动一次</td>
+</tr>
+<tr>
+<td style="text-align:center">boot</td>
+<td style="text-align:center">只在系统启动时才运行指定进程。init不等待处理结束便继续后续操作</td>
+</tr>
+<tr>
+<td style="text-align:center">bootwait</td>
+<td style="text-align:center">只在系统启动时才运行指定进程。init等待处理结束才继续后续操作</td>
+</tr>
+<tr>
+<td style="text-align:center">powerfail</td>
+<td style="text-align:center">init接收到断电信号（SIGPWR）时才运行该进程，不等待处理结束便继续后续操作。</td>
+</tr>
+<tr>
+<td style="text-align:center">powerwait</td>
+<td style="text-align:center">init接收到断电信号（SIGPWR）时才运行该进程，等待处理结束才继续后续操作。</td>
+</tr>
+<tr>
+<td style="text-align:center">powerokwait</td>
+<td style="text-align:center">在电源restore时启动该进程。不太清楚restore在这里的具体含义。</td>
+</tr>
+<tr>
+<td style="text-align:center">powerfailnow</td>
+<td style="text-align:center">在电源快耗尽时启动该进程。</td>
+</tr>
+<tr>
+<td style="text-align:center">off</td>
+<td style="text-align:center">如果相应的进程正在运行，那么就发出一个告警信号，等待20秒后，再通过关闭信号强行终止该进程。如果相应的进程并不存在，那么就忽略该登记项。</td>
+</tr>
+<tr>
+<td style="text-align:center">ondemand</td>
+<td style="text-align:center">在系统进入相应运行级别时运行一次。</td>
+</tr>
+<tr>
+<td style="text-align:center">sysinit</td>
+<td style="text-align:center">在所有boot和bootwait记录前启动，一般仅用于对设备的初始化工作。init等待操作结束才继续执行。</td>
+</tr>
+<tr>
+<td style="text-align:center">initdefault</td>
+<td style="text-align:center">指定默认的运行级别。忽略process项。</td>
+</tr>
+<tr>
+<td style="text-align:center">ctrlaltdel</td>
+<td style="text-align:center">在init收到SIGINT信号（即Ctrl+Alt+Del被同时按下）时启动相应进程。</td>
+</tr>
+<tr>
+<td style="text-align:center">kbrequest</td>
+<td style="text-align:center">在init发现有组合键被按下时执行相应进程。</td>
+</tr>
+</tbody>
+</table>
+<p>在上述参数中，sysinit、boot和bootwait的runlevel项被忽略。</p>
+<h3 id="服务的启动方式"><a href="#服务的启动方式" class="headerlink" title="服务的启动方式"></a>服务的启动方式</h3><p><code>init</code>是第一个启动的，然后它会根据当前的运行等级来唤醒不同的服务。当Linux启动以后，它会去运行对应的<code>/etc/rc.d/rc[runlevel].d/</code>目录下存放的脚本。脚本的名称一般是<code>SXXdaemon</code> <code>S</code>为启动该服务，XX是数字表示启动的顺序，数字越低越先执行。当你使用<code>init runlevel</code>切换运行等级时，比如说从3转到5。init会自动分析<code>/etc/rc.d/rc[3].d/</code>和<code>/etc/rc.d/rc[5].d/</code>目录下的脚本，然后启动所需要的服务，就完成了转换。</p>
+<h4 id="运行等级"><a href="#运行等级" class="headerlink" title="运行等级"></a>运行等级</h4><p><code>init</code>等级分级一般如下</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">等级</th>
+<th style="text-align:center">模式</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">停止</td>
+<td style="text-align:center">就是关机状态啦</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">单人维护模式</td>
+<td style="text-align:center">仅允许root登录，不启动daemons，不配置网络接口</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">多用户模式</td>
+<td style="text-align:center">不配置网络接口，不启动deamons</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">带网络的多用户模式</td>
+<td style="text-align:center">就是正常启动的状态</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">未定义的</td>
+<td style="text-align:center">没有特别规定这个登记下的模式，可以自定义等级4的操作</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">图形界面模式</td>
+<td style="text-align:center">运行在模式3下并且提供图形界面</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">重启模式</td>
+<td style="text-align:center">就是重启啦</td>
+</tr>
+</tbody>
+</table>
+<h4 id="服务的相关目录如下"><a href="#服务的相关目录如下" class="headerlink" title="服务的相关目录如下"></a>服务的相关目录如下</h4><table>
+<thead>
+<tr>
+<th style="text-align:center">路径</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">/etc/init.d/*</td>
+<td style="text-align:center">启动脚本放置的位置，几乎所有服务启动脚本都放在这里</td>
+</tr>
+<tr>
+<td style="text-align:center">/etc/rc.d/init.d/*</td>
+<td style="text-align:center">和上面那个一样，是一个连接而已</td>
+</tr>
+<tr>
+<td style="text-align:center">/etc/rc.d/rc[0-6].d/*</td>
+<td style="text-align:center">存放各个运行等级下会启动的脚本，一般是连接到/etc/init.d/目录下的文件</td>
+</tr>
+<tr>
+<td style="text-align:center">/etc/sysconfig/*</td>
+<td style="text-align:center">各个服务的初始化环境设定文件</td>
+</tr>
+<tr>
+<td style="text-align:center">/etc/xinetd.conf，/etc/xinetd.d/*</td>
+<td style="text-align:center">super daemon本身的设定文件是/etc/xinetd.conf，其他daemon的设定放置在/etc/xinetd.d/*目录下详细可以看本章开头的网址</td>
+</tr>
+<tr>
+<td style="text-align:center">/var/run/*</td>
+<td style="text-align:center">为了方便管理，daemon会将自己的PID记录一份放置到/var/run/*目录中</td>
+</tr>
+</tbody>
+</table>
+<h3 id="添加开机自启动"><a href="#添加开机自启动" class="headerlink" title="添加开机自启动"></a>添加开机自启动</h3><p><code>chkconfig</code>是个用于管理System V系统自启动的软件。所有发行版都带有这个工具。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ chkconfig --list</div><div class="line"># 显示服务的自启动状态，输出示例如下所示</div><div class="line">acpid   0:off   1:off   2:off   3:on   4:on   5:on   6:off</div><div class="line"></div><div class="line">$ chkconfig --list 3</div><div class="line"># 显示运行等级为3时启用的服务</div><div class="line"></div><div class="line">$ chkconfig --list httpd</div><div class="line"># 显示httpd的自启动状态</div><div class="line"></div><div class="line">$ chkconfig --level 345 acpid on</div><div class="line"># 设置acpid在3 4 5 run level状态下自启动</div><div class="line"></div><div class="line">$ chkconfig --add sslocal</div><div class="line"># 添加一个服务名来让chkconfig管理，该服务名必须在/etc/init.d/目录内。添加以后就可以设置它的启动状态了。</div><div class="line"></div><div class="line">$ chkconfig --del sslocal</div><div class="line"># 有添加自然就有删除</div></pre></td></tr></table></figure></p>
+<p>如何设置启动顺序呢？这就需要我们手动修改脚本了，假设我们有一个ss脚本（要放置在/etc/init.d/目录下）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment"># chkconfig:35 80 70</span></div><div class="line"><span class="comment"># description: Shadowsocks Service</span></div><div class="line">sslocal -c /etc/shadowsocks.json</div></pre></td></tr></table></figure></p>
+<p>35表示在run level 3和5下执行，80表示启动时的顺序是80，70表示结束时的顺序是70。数字低的先被执行。<br><code>chkconfig</code>其实就是把一些繁琐的操作简单化了，当你设置一个脚本在run level 3下执行时，<code>chkconfig</code>会在<code>/etc/rc.d/rc3.d</code>创建一个连接文件。当系统以run level 3启动时，就回去执行<code>/etc/rc.d/rc3.d</code>目录下面的文件</p>
+<h2 id="Systemd管理服务"><a href="#Systemd管理服务" class="headerlink" title="Systemd管理服务"></a>Systemd管理服务</h2><p>CentOS 7.x 以后，采用了<code>systemd</code>的管理方式，这个管理方式有以下优点：</p>
+<ul>
+<li>以往的<code>init</code>是一个服务一个服务启动，所以后面的服务得慢慢等待。而<code>systemd</code>则可以同时启动所有服务，启动速度大大加快</li>
+<li>System V要使用<code>init</code>，<code>service</code>，<code>chkconfig</code>三个命令来来管理服务，而<code>systemd</code>只需要一个<code>systemctl</code>命令搭配<code>systemd</code>服务来管理。</li>
+<li><code>systemd</code>可以自动解决依赖，当服务B需要服务A时，<code>systemd</code>会自动帮你启动服务A</li>
+<li>System V中把仅有两种服务分类<code>stand alone</code>和<code>super daemon</code>。<code>systemd</code>将每个服务都定义成一个<code>unit</code>，<code>unit</code>拥有很多分类，service，socket，target，path，snapshot，timer等等</li>
+<li>System V使用不同的<code>run level</code>来将不同情况下需要启动的服务分组，<code>systemd</code>将许多功能组成一个target来进行配置</li>
+<li><code>systemd</code>是向下兼容init的</li>
+</ul>
+<p>缺点是：</p>
+<ul>
+<li><code>systemd</code>采用<code>systemctl</code>命令管理，但是<code>systemctl</code>这个命令语法有所限制，所以不能使用自定义参数，但是<code>/etc/init.d/daemon</code>就是一个纯shell脚本，灵活度相当高。</li>
+<li>如果服务是用户直接手动输入命令启动的，比如<code>mysqld</code>，那么<code>systemd</code>是没法管理这个服务的，只有通过<code>systemctl</code>启动的服务才能受到<code>systemd</code>的管理</li>
+<li><code>systemd</code>启动过程中无法通过标准输入来互动</li>
+</ul>
+<h3 id="systemd-的相关目录"><a href="#systemd-的相关目录" class="headerlink" title="systemd 的相关目录"></a>systemd 的相关目录</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">目录</th>
+<th style="text-align:center">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">/usr/lib/systemd/system</td>
+<td style="text-align:center">每个服务最主要的启动脚本，类似于以前的/etc/init.d目录</td>
+</tr>
+<tr>
+<td style="text-align:center">/run/systemd/system/</td>
+<td style="text-align:center">系统执行过程中所产生的服务脚本，这个优先级比上面的目录高</td>
+</tr>
+<tr>
+<td style="text-align:center">/etc/systemd/system/</td>
+<td style="text-align:center">管理员依据系统需求所产生的脚本，这个脚本的优先级又比上一个高</td>
+</tr>
+<tr>
+<td style="text-align:center">/etc/sysconfig/</td>
+<td style="text-align:center">几乎所有服务都会将初始化的一些选项设定写入到这个目录下。比如说网络服务就保存在<code>/etc/sysconfig/network-scripts/</code></td>
+</tr>
+<tr>
+<td style="text-align:center">/run/</td>
+<td style="text-align:center">运行时暂存文件</td>
+</tr>
+<tr>
+<td style="text-align:center">/var/lib/</td>
+<td style="text-align:center">一些会产生数据的服务都会写到/var/lib目录中。比如mysql数据保存在<code>/var/lib/mysql/</code></td>
+</tr>
+</tbody>
+</table>
+<p>看系统开机会不会执行某个服务，就是到<code>/etc/systemd/system/</code>目录下瞧一瞧就行。<code>/usr/lib/systemd/system</code>只是实际存放启动脚本的位置，<code>/etc/systemd/system/</code>的文件都是连接到<code>/usr/lib/systemd/system</code>目录下的</p>
+<h3 id="systemd的unit类型分类"><a href="#systemd的unit类型分类" class="headerlink" title="systemd的unit类型分类"></a>systemd的unit类型分类</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">扩展名</th>
+<th style="text-align:center">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">.service</td>
+<td style="text-align:center">比较经常被用到的服务大多是这个类型的。最常见的类型。</td>
+</tr>
+<tr>
+<td style="text-align:center">.socket</td>
+<td style="text-align:center">插槽服务，主要是inter-process communication的socket file功能。这个类型的服务一般是比较不会被用到的服务。</td>
+</tr>
+<tr>
+<td style="text-align:center">.target</td>
+<td style="text-align:center">就是一堆.service和.socket的集合</td>
+</tr>
+<tr>
+<td style="text-align:center">.mount/.automount</td>
+<td style="text-align:center">和文件系统挂载相关的服务</td>
+</tr>
+<tr>
+<td style="text-align:center">.path</td>
+<td style="text-align:center">某些需要检测特定目录的服务，比如说打印服务</td>
+</tr>
+<tr>
+<td style="text-align:center">.timer</td>
+<td style="text-align:center">循环执行的任务，比如说计划任务之类的</td>
+</tr>
+</tbody>
+</table>
+<h3 id="通过systemctl管理服务"><a href="#通过systemctl管理服务" class="headerlink" title="通过systemctl管理服务"></a>通过systemctl管理服务</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"># status 用来查看服务的状态</div><div class="line">$ systemctl status mysqld.service</div><div class="line">atd.service - Job spooling tools</div><div class="line">    Loaded: loaded (/usr/lib/systemd/system/atd.service; enabled)</div><div class="line">    Active: active (running) since Mon 2015-08-10 19:17:09 CST; 5h 42min ago</div><div class="line"></div><div class="line"># Loaded这行如果为enabled，enable为开机启动，disable为开机不会启动</div><div class="line"># 除了上面两个还有</div><div class="line"># static：这个服务不会自己启动，但可能会被其他服务唤醒（依赖）</div><div class="line"># mask：这个服务无论如何也不会启动，也无法被其他服务唤醒</div><div class="line"></div><div class="line"># Active折行表示服务当前状态是正在运行（running）还是没有执行（dead）</div><div class="line"># Active除了上面的还有</div><div class="line"># active(exited)表示运行一次就结束，不会常驻内存。</div><div class="line"># active(waiting)表示正在运行，但是正在等待其他事件才能处理。比如打印机要等待作业进来才会工作</div><div class="line"># inactive：这个服务没有运行的意思</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"># stop 用来正常关闭服务</div><div class="line">$ systemctl stop mysqld.service</div><div class="line"></div><div class="line"># start 用来启动服务</div><div class="line">$ systemctl start mysqld.service</div><div class="line"></div><div class="line"># disable 关闭开机自启</div><div class="line">$ systemctl disable mysqld.service</div><div class="line"></div><div class="line"># enable 开启开机自启</div><div class="line">$ systemctl disable mysqld.service</div><div class="line"></div><div class="line"># mask 让服务无论如何也不会被执行；unmask 用来解除</div><div class="line">$ systemctl mask mysqld.service</div><div class="line"></div><div class="line"># list-unit 查看目前启动的unit，加上--all才会显示没启动的</div><div class="line">$ systemctl list-units </div><div class="line"># --type=可以显示特定类型</div><div class="line">$ systemctl list-units --type=target --all</div><div class="line"></div><div class="line"># list-unit-files 显示所有已安装的unit</div><div class="line">$ systemctl list-units-files</div><div class="line">UNIT FILE           STATE</div><div class="line">dev-mqueue.mount    static</div><div class="line">dev-hugepages.mount static</div><div class="line"># STATE 就是 enable/disabled/mask/static 这些</div></pre></td></tr></table></figure>
+<h3 id="管理target"><a href="#管理target" class="headerlink" title="管理target"></a>管理target</h3><p>有下面几个主要的 target</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">target</th>
+<th style="text-align:center">场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">graphical.target</td>
+<td style="text-align:center">纯文本模式加上界面</td>
+</tr>
+<tr>
+<td style="text-align:center">multi-user.target</td>
+<td style="text-align:center">纯文本模式</td>
+</tr>
+<tr>
+<td style="text-align:center">rescue.target</td>
+<td style="text-align:center">在无法使用root登入的情况下，systemd在开机时会多加一个额外的暂时系统，与你原本的系统无关。这时你可以取得root的权限来维护你的系统</td>
+</tr>
+<tr>
+<td style="text-align:center">emergency.target</td>
+<td style="text-align:center">当无法使用rescue.target时，可以尝试使用这种模式</td>
+</tr>
+<tr>
+<td style="text-align:center">shutdown.target</td>
+<td style="text-align:center">关机流程</td>
+</tr>
+<tr>
+<td style="text-align:center">getty.target</td>
+<td style="text-align:center">设定你需要几个tty之类，如果要降低tty的项目，可以修改这个东西的配置文件</td>
+</tr>
+</tbody>
+</table>
+<p>切换target使用<code>systemctl</code>命令。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"># 获取当前的默认target</div><div class="line">$ systemctl get-default</div><div class="line"></div><div class="line"># 设置默认target</div><div class="line">$ systemctl set-default multi-user.target</div><div class="line"></div><div class="line"># 不重启的情况下将环境改为纯文本模式</div><div class="line">$ systemctl isolate multi-user.target</div><div class="line"># 除了使用isolate命令切换，还可以使用便捷命令</div><div class="line">$ systemctl poweroff #关机</div><div class="line">$ systemctl reboot #重新启动</div><div class="line">$ systemctl suspend #睡眠模式，系统状态保存到内存里面</div><div class="line">$ systemctl hibernate #休眠模式，系统状态保存到硬盘里面</div><div class="line">$ systemctl rescue #强制进入救援模式</div><div class="line">$ systemctl emergency #强制进入紧急救援模式</div></pre></td></tr></table></figure></p>
+<h3 id="分析依赖"><a href="#分析依赖" class="headerlink" title="分析依赖"></a>分析依赖</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"># 列出unit的依赖</div><div class="line">$ systemctl list-dependencies mysqld</div><div class="line"></div><div class="line"># 列出哪个服务依赖 mysqld</div><div class="line">$ systemctl list-dependencies mysqld --reverse</div><div class="line"></div><div class="line"># 显示当前当前target的依赖</div><div class="line">$ systemctl list-dependencies</div></pre></td></tr></table></figure></div><div class="tags"><a class="tag-link" href="/tags/linux/">linux</a></div></section></div><div class="container"><ul class="nav"><li>上一篇：<a href="/2017/08/31/post/">关于这个博客</a></li><li>下一篇：<a href="/2017/03/11/javascript-error/">JavaScript异常处理最佳实践</a></li></ul></div><div id="backToTop"><div class="back-arrow back-arrow-left"></div><div class="back-arrow back-arrow-right"></div></div><footer class="container"><div class="rights"><span>Powered by </span><a href="http://hexo.io" target="_blank">Hexo</a><span>, Theme </span><a href="https://github.com/gary-Shen/hexo-theme-bear" target="_blank">Bear</a><span>.</span></div></footer><script src="/script/jquery.min.js"></script><link rel="stylesheet" href="/fancybox/jquery.fancybox.css"><script src="/fancybox/jquery.fancybox.pack.js"></script><script src="/script/index.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-138857294-1', 'auto');
+ga('send', 'pageview');</script><script src="/script/post.js"></script></body></html>

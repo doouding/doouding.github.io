@@ -1,0 +1,47 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="description"><meta name="keyword"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="IE=edge"><title>理解line-height和vertical-align</title><link rel="shortcut icon" href="/images/avatar.png" type="image/x-icon"><link href="/styles/site.css" rel="stylesheet"></head><body><header class="container" id="header"><div class="header"><div class="header-left"><div class="avatar"><img src="/images/avatar.png"></div><div class="author"><div class="author-name"><a href="/">小新</a></div><div class="about-me">Live free or die</div></div></div><div class="header-right"><ul class="navigation"><li><a href="/archives">归档</a></li></ul></div><div class="about-me-mask"><div class="about-me-wrap"><div class="about-me__header"><div class="avatar"><img src="/images/avatar.png"></div></div><ul class="socials"><li class="social-item"><span class="label"><img src="/images/socials/github.svg" alt="https://github.com/codertx"></span><a href="https://github.com/codertx" target="_blank" title="https://github.com/codertx">https://github.com/codertx</a></li><li class="social-item"><span class="label"><img src="/images/socials/email.svg" alt="codert.sn@gmail.com"></span><span>codert.sn@gmail.com</span></li></ul></div></div></div></header><div class="container post"><section class="article"><div class="title">理解line-height和vertical-align</div><div class="date">写于2016年04月21日</div><div class="content"><p>我想吐嘈的是，W3C的标准不是一般的晦涩，特别是中文翻译，看了好几遍仍然搞不懂在说什么。只好硬着头皮去看英文。果然我还是太年轻了，看英文看得我递归懵逼。不过再看了几篇前辈的文章之后再回来看，感觉好像理解了一点了。我争取用比较易懂的语言描述一下<code>line-height</code>和<code>vertical-align</code>属性。</p>
+<a id="more"></a>
+<p>阅读这篇文章之前需要对IFC、行内盒等相关知识点有一个概念。不然会一脸懵逼。</p>
+<h2 id="行盒的高度计算"><a href="#行盒的高度计算" class="headerlink" title="行盒的高度计算"></a>行盒的高度计算</h2><p><strong>行盒（line box）</strong>说白了就是用来包含视觉上一行文字的一个盒子。为什么说视觉上呢，因为如果一串文字太长了在浏览器里一行显示不下然后换行了，那么这就相当于有两个行盒存在了，因为这个时候有两行文字存在了。行盒是由<strong>行内格式化上下文（IFC）</strong>创建的，但一般我们不需要关注这些，因为浏览器会处理这些。我们需要关心的只是<strong>行盒（line box）</strong>的高度。</p>
+<p>行盒的高度计算步骤如下：</p>
+<ol>
+<li>计算行盒所包含的的所有<strong>行内级盒（inline-level box）</strong>对于<strong>行内盒（inline box）</strong>，它的高度就是line-height属性的高度。对于替换元素，或者<code>display</code>属性为<code>inline-block</code>和<code>inline-table</code>的元素，它的高度就是盒边界的高度（就是垂直方向上<code>margin</code> + <code>padding</code> + <code>content</code>的宽度总和）</li>
+<li>行内级元素根据其<code>vertical-align</code>属性对齐。</li>
+<li>如果<code>vertical-align</code>的值为<code>top</code>或<code>bottom</code>，那么行盒的高度在计算的时候应该尽可能小。</li>
+<li>行盒最终的高度取决于行盒内最高行内级盒的高度。</li>
+</ol>
+<h2 id="行距与半行距"><a href="#行距与半行距" class="headerlink" title="行距与半行距"></a>行距与半行距</h2><p><code>line-height</code>的高度包含字体的高度和行距的高度。我们用<code>AD</code>表示一个文字的高度<sup>[1]</sup>，用<code>L</code>表示行距。在CSS标准里面，有这样一个公式 <code>L = &#39;line-height&#39; - AD</code>。也就是行距等于<code>line-height</code>的高度减去字体的高度。这样就能够得到行距的大小。行距一分为二，一半加在<code>A</code>上面也就是基线上方，一半加在<code>D</code>上面也就是基线下方。因为行距被平均一分为二，所以在视觉表现上面看起来就和居中一样。所以<code>inline-height</code>也可以用于垂直居中。L也可以为负数，这样的效果就是上下同时减去相等的高度。</p>
+<p><span style="color: grey;font-size:14px">[1]：在字体系统中，A表示文字的高度，D表示文字的深度，通过A和D相加就能得到字体本身的高度，A和D交界处就是基线（baseline）的位置。我们不需要纠结A和D的概念，只需要知道A+D是文字的高度，以及文字的高度在基线处一分为二就是了<span></span></span></p>
+<h2 id="属性分析"><a href="#属性分析" class="headerlink" title="属性分析"></a>属性分析</h2><p>我们的前置概念介绍完了，所以现在开始真正的介绍<code>line-height</code>和<code>vertical-align</code>两个属性了。</p>
+<h3 id="line-height属性"><a href="#line-height属性" class="headerlink" title="line-height属性"></a>line-height属性</h3><p><code>line-height</code>属性有四种取值：</p>
+<ul>
+<li><code>normal</code>：默认值，这个默认值实际上是由浏览器设置的一个 “合理” 的<code>&lt;number&gt;</code>类型值，因此和<code>&lt;number&gt;</code>的效果一样，W3C建议这个值为1.0到1.2之间</li>
+<li><code>&lt;length&gt;</code>：直接指定<code>line-height</code>为一个绝对值，要加<code>px</code>单位，负值无效</li>
+<li><code>&lt;number&gt;</code>：<code>font-size</code>的值乘上这个值来作为<code>line-height</code>的高度值，没有单位，负值无效</li>
+<li><code>&lt;percentage&gt;</code>: <code>font-size</code>乘上这个值来作为<code>line-height</code>的高度值，单位%，负值无效</li>
+</ul>
+<p>然后这个属性有一个关键的性质：继承。不同类型的值，继承的方式不同。<br>对于<code>&lt;length&gt;</code>类型，子元素回直接继承父元素的值。</p>
+<p>对于<code>&lt;number&gt;</code>类型的值，子元素会直接继承父元素的值，当子元素和父元素的<code>font-size</code>不一样时，最终计算出来的行高也不一样。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"father"</span> <span class="attr">style</span>=<span class="string">"line-height: 1.5; font-size: 18px"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"child"</span> <span class="attr">style</span>=<span class="string">"font-size: 20px"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line">  <span class="comment">&lt;!-- 父元素的行高计算后是 18 * 1.5 = 27px --&gt;</span></div><div class="line">  <span class="comment">&lt;!-- 子元素的行高计算后是 20 * 1.5 = 30px --&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>对于<code>&lt;percentage&gt;</code>类型的值，子元素会直接继承父元素计算后的值<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"father"</span> <span class="attr">style</span>=<span class="string">"line-height:200%;font-size:15px"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">id</span>=<span class="string">"child"</span> <span class="attr">style</span>=<span class="string">"font-size:18px"</span>&gt;</span>哈哈<span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!--父元素的行高实际值是 15 * 200% = 30px --&gt;</span></div><div class="line">    <span class="comment">&lt;!--子元素直接继承父元素计算后的值也就是30px --&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h3 id="vertical-align-属性"><a href="#vertical-align-属性" class="headerlink" title="vertical-align 属性"></a>vertical-align 属性</h3><p><code>vertical-align</code>用来设定行内级盒在行盒中的垂直位置。</p>
+<p>我们前面说过，行高是由行盒里面包含的最高的那个盒决定的。在CSS规范里面，这个最高的盒被称为”支撑（strut）”。我们不妨称它为支撑盒。</p>
+<p><code>vertical-align</code>有一个重要的特性，就是它有些取值最后计算出来的位置，都是相对于这个支撑盒而确定的。</p>
+<p>以下取值是相对于支撑盒确定的：</p>
+<ul>
+<li><code>baseline</code>：默认值，将盒的基线与父盒的基线对齐。若盒没有基线，将底边界与父盒的基线对齐。</li>
+<li><code>middle</code>，将盒的垂直中心点与父盒的基线加半个父盒中字母「x」的高度<sup>[2]</sup>对齐</li>
+<li><code>sub</code>，将盒的基线下降到父盒下标的位置</li>
+<li><code>super</code>，将盒的基线上升到父盒上标的位置</li>
+<li><code>text-top</code>，将盒的顶边与父盒内容区域的顶边对齐</li>
+<li><code>text-bottom</code>，将盒的底边与父盒内容区域的底边对齐</li>
+<li><code>&lt;percentage&gt;</code>，以<code>line-height</code>作为参考，<code>baseline</code>作为初始位置，上升或下降计算后的距离</li>
+<li><p><code>&lt;length&gt;</code>：baseline作为初始位置，上升或下降设定的距离</p>
+<p>下面这两个值是相对于行盒对齐的</p>
+</li>
+<li><code>top</code>：把元素顶端与行盒中最高元素的顶端对齐</li>
+<li><p><code>bottom</code>：把元素顶端与行盒中最低元素的顶端对齐</p>
+<p><span style="color: grey;font-size:14px">2：原文写的是x-height，x-height是英文字体设计中的一个术语词，它的标准高是一个小写字母x的高度单位，详情可以看下<a href="https://zh.wikipedia.org/wiki/X%E5%AD%97%E9%AB%98" target="_blank" rel="external">维基百科：X字高</a></span></p>
+</li>
+</ul>
+</div><div class="tags"><a class="tag-link" href="/tags/css/">css</a></div></section></div><div class="container"><ul class="nav"><li>上一篇：<a href="/2016/05/03/about-em-and-rem/">说一说CSS里面的数值单位</a></li><li>下一篇：<a href="/2016/04/19/box-generate/">视觉格式化模型</a></li></ul></div><div id="backToTop"><div class="back-arrow back-arrow-left"></div><div class="back-arrow back-arrow-right"></div></div><footer class="container"><div class="rights"><span>Powered by </span><a href="http://hexo.io" target="_blank">Hexo</a><span>, Theme </span><a href="https://github.com/gary-Shen/hexo-theme-bear" target="_blank">Bear</a><span>.</span></div></footer><script src="/script/jquery.min.js"></script><link rel="stylesheet" href="/fancybox/jquery.fancybox.css"><script src="/fancybox/jquery.fancybox.pack.js"></script><script src="/script/index.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-138857294-1', 'auto');
+ga('send', 'pageview');</script><script src="/script/post.js"></script></body></html>

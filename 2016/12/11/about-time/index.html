@@ -1,0 +1,139 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="description"><meta name="keyword"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="IE=edge"><title>JavaScript Date 对象以及标准时间格式</title><link rel="shortcut icon" href="/images/avatar.png" type="image/x-icon"><link href="/styles/site.css" rel="stylesheet"></head><body><header class="container" id="header"><div class="header"><div class="header-left"><div class="avatar"><img src="/images/avatar.png"></div><div class="author"><div class="author-name"><a href="/">小新</a></div><div class="about-me">Live free or die</div></div></div><div class="header-right"><ul class="navigation"><li><a href="/archives">归档</a></li></ul></div><div class="about-me-mask"><div class="about-me-wrap"><div class="about-me__header"><div class="avatar"><img src="/images/avatar.png"></div></div><ul class="socials"><li class="social-item"><span class="label"><img src="/images/socials/github.svg" alt="https://github.com/codertx"></span><a href="https://github.com/codertx" target="_blank" title="https://github.com/codertx">https://github.com/codertx</a></li><li class="social-item"><span class="label"><img src="/images/socials/email.svg" alt="codert.sn@gmail.com"></span><span>codert.sn@gmail.com</span></li></ul></div></div></div></header><div class="container post"><section class="article"><div class="title">JavaScript Date 对象以及标准时间格式</div><div class="date">写于2016年12月11日</div><div class="content"><h2 id="1-ISO-8601标准"><a href="#1-ISO-8601标准" class="headerlink" title="1 ISO 8601标准"></a>1 ISO 8601标准</h2><p>很多语言都有实现ISO 8601标准。所以我们有必要了解一下ISO 8601标准。ISO 8601标准，全称是《数据存储和交换形式·信息交换·日期和时间的表示方法》。该标准已经到了第三版“ISO8601:2004”，用以替代第一版“ISO8601:1988”和第二版“ISO8601:2000”。</p>
+<h3 id="1-1-表示日期的方法"><a href="#1-1-表示日期的方法" class="headerlink" title="1.1 表示日期的方法"></a>1.1 表示日期的方法</h3><p>首先是只使用数字为<strong>基本格式</strong>，例如20161206。使用了短横线隔开的为<strong>扩展格式</strong>，例如2016-12-06</p>
+<a id="more"></a>
+<h3 id="1-2-日历日期表示法"><a href="#1-2-日历日期表示法" class="headerlink" title="1.2 日历日期表示法"></a>1.2 日历日期表示法</h3><p>也是我们日常使用比较常见的表示法。年份由四位数表示，月份由两位数表示，日由两位数表示。ISO8601:2004不在允许使用两位数表示年份。<br>有效的日历日期表示方法如下</p>
+<pre><code>YYYY-MM-DD 或者 YYYYMMDD
+YYYY-MM (不允许YYYYMM，因为会和以前标准的YYMMDD混淆)
+--MM-DD 或者 --MMDD (属于ISO8601:2000标准，2004标准中不允许省略年份)
+</code></pre><h3 id="1-3-序数日期表示法"><a href="#1-3-序数日期表示法" class="headerlink" title="1.3 序数日期表示法"></a>1.3 序数日期表示法</h3><p>将一年内的天数用三位数表示，平年365，闰年366。<br>例如：2004年5月3日是一年中第124天，用天数表示法可以写作2004124或者2004-124。有效的表示方法就这两种</p>
+<h3 id="1-4-星期日期表示法"><a href="#1-4-星期日期表示法" class="headerlink" title="1.4 星期日期表示法"></a>1.4 星期日期表示法</h3><p>用2位数表示这星期是本年第几个星期，星期前面要加一个大写W，再用一位数表示一个星期中的第几天。星期一是第一天，星期日是最后一天。<br>如果1月1日是星期一、星期二、星期三、星期四的话，则该星期是该年的第一个星期。如果是星期五、星期六、星期日的话，则该星期是昨年的最后一个星期。<br>例如：2004年5月3日可以写成2004-W19-1或者2004W191。<br>2005年1月1日是星期六，是昨年的最后一个星期。所以用星期表示法该写为2004-W53-6或者2004W536<br>有效的表示方法</p>
+<pre><code>YYYY-Www 或者 YYYYWww
+YYYY-Www-D 或者 YYYYWwwD
+</code></pre><h3 id="1-5-表示时间的方法"><a href="#1-5-表示时间的方法" class="headerlink" title="1.5 表示时间的方法"></a>1.5 表示时间的方法</h3><p>小时、分钟、秒都用二位数表示，只使用数字为基本格式，使用冒号隔开为扩展格式。对于子夜这个时间点，可以表示成00:00或者24:00。比如<code>2007-04-05T24:00</code>和<code>2007-04-06T00:00</code>是一样的<br>有效的表示方法</p>
+<pre><code>hh:mm:ss 或者 hhmmss
+hh:mm 或者 hhmm
+hh
+</code></pre><h3 id="1-6-时区"><a href="#1-6-时区" class="headerlink" title="1.6 时区"></a>1.6 时区</h3><p>在没有指定时区的时候，默认表示的都是本地时区。对于在同一地区的通信来说，使用本地时区已经足够。但是对于跨地区通信，就有必要采用统一的时间。</p>
+<p>如果要表示UTC标准时间(我们可以认为UTC和GMT是一样的)，在时间后面添加一个大写Z即可。例如：<code>14:23:14Z</code>或者<code>142314Z</code>。时区的偏移附加到末尾，例如：<code>+01:00</code>，<code>+0100</code>，<code>+01</code>。<br>对于零偏移量，2004标准规定不能使用<code>-00:00</code>、<code>-0000</code>、<code>-00</code>。只能使用带加号的。</p>
+<p>一定不要搞错了，后面这个偏移不是用来加到前面那个时间上的，它只是用来表示这个时间相对于UTC时间偏移了多少。例如<code>07:00Z+08:00</code>是表示<code>+08:00</code>这个时区<code>7:00</code>。而不是表示<code>+08:00</code>这个时区<code>15:00</code></p>
+<p>读时间的时候不需要后面那个数字，但是转换时间的时候就需要那个数字了。本地时间转换成UTC时间应该减去偏移量，而UTC转换成本地时间则是加上那个偏移量</p>
+<ul>
+<li>北京时间14:00，表示为<code>14:00Z+08:00</code>，转换成UTC时间则是<code>14:00 - 8:00</code>，也就是<code>6:00Z</code>。</li>
+<li>UTC时间<code>14:00Z</code>，转换成北京时间换算的话则表示为<code>22:00Z+08:00</code>。计算方法<code>(22:00 + 08:00))</code></li>
+</ul>
+<h3 id="1-7-日期时间组合表示"><a href="#1-7-日期时间组合表示" class="headerlink" title="1.7 日期时间组合表示"></a>1.7 日期时间组合表示</h3><p>中间加个T就行了<br>例如<code>2007-04-05T12:30-02:00</code></p>
+<h2 id="2-RFC-2822-时间格式"><a href="#2-RFC-2822-时间格式" class="headerlink" title="2 RFC 2822 时间格式"></a>2 RFC 2822 时间格式</h2><p>RFC(Request For Comments)，是由IETF发布的一系列备忘录。是用来记录互联网规范、协议、过程等的标准文件。基本的互联网通信协议都有在RFC文件内详细说明。RFC 2822全称是《互联网信息格式》，用来取代前任RFC 822，这个文件定义了电子邮件的格式语法，其中就包含了日期的表示方法。</p>
+<p>RFC规范读起来有点繁琐，所以我只把一些重要的部分列出来。还有很多细节的地方，比如说空格什么的，我就不再细说。</p>
+<ul>
+<li>表示星期是取英文的前三个字母： Mon、Tue、Wed、Thu、Fri、Sat、Sun。我们记作 <code>day-of-week</code></li>
+<li>表示年份是4个数字，我们记作 <code>year</code></li>
+<li>表示月份用的不是数字同样也是三个字母：Jan、Feb、Mar、Apr、May、Jun、Jul、Aug、Sep、Oct、Nov、Dec，我们记作 <code>month</code></li>
+<li>表示日期是一个或两个数字，我们记作<code>day</code></li>
+<li>表示时间是类似的，<code>13:14:23</code>，既每个部分用两个数字表示，同时秒可以省略，所以前面的时间也可以写成<code>13:14</code>，我们记作<code>time</code></li>
+<li>时区表示为正负偏移加四个数字。北京处于东八时区，表示出来就是<code>+0800</code>。加上时间写出来就是<code>13:14 +0800</code>，我们把时区记作<code>zone</code>。<br>  还需要注意的是<code>-0000</code>和<code>+0000</code>含义不同，<code>+0000</code>表示的是格林威治标准时间的时区，而<code>-0000</code>表示除<code>+0000</code>以外区，但不知道具体是那个时区。</li>
+<li>时区除了上面的这种表示方式，还可以采用原先822标准规定，这个老的标准没有新的标准来的直观。格林威治标准时间可以直接写成<code>UT</code>或者<code>GMT</code>。对于<code>-0400</code>到<code>-0800</code>，它有给了每个时区名称</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">对应时区</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">UT</td>
+<td style="text-align:center">+0000</td>
+</tr>
+<tr>
+<td style="text-align:center">GMT</td>
+<td style="text-align:center">+0000</td>
+</tr>
+<tr>
+<td style="text-align:center">EDT</td>
+<td style="text-align:center">-0400</td>
+</tr>
+<tr>
+<td style="text-align:center">EST</td>
+<td style="text-align:center">-0500</td>
+</tr>
+<tr>
+<td style="text-align:center">CDT</td>
+<td style="text-align:center">-0500</td>
+</tr>
+<tr>
+<td style="text-align:center">CST</td>
+<td style="text-align:center">-0600</td>
+</tr>
+<tr>
+<td style="text-align:center">MDT</td>
+<td style="text-align:center">-0600</td>
+</tr>
+<tr>
+<td style="text-align:center">MST</td>
+<td style="text-align:center">-0700</td>
+</tr>
+<tr>
+<td style="text-align:center">PDT</td>
+<td style="text-align:center">-0700</td>
+</tr>
+<tr>
+<td style="text-align:center">PST</td>
+<td style="text-align:center">-0800</td>
+</tr>
+</tbody>
+</table>
+<p>同时还包括军用时区表示方法，A表示<code>-0100</code>，M表示<code>-1200</code>，N表示<code>0100</code>，Y表示<code>+1200</code>。剩余的没有规定的，就直接采用前面所说的+/-4个数字就行了。<br>但是，根据新的标准规定，如果采用军用时区的表示方法，应当一律看做<code>-0000</code>，也就是对所在时区无法确定。(RFC 2822文件上面是说RFC 822所定义的标准有错误，最好不要再使用这种表示方法)</p>
+<p>整个时间日期表示方法是：<code>day-of-week</code>, <code>day</code> <code>month</code> <code>year</code> <code>time</code> <code>zone</code>。其中<code>day-of-week</code>是可以省略的（省略的时候记得后面的逗号也要去掉），所以也可以表示为<code>day</code> <code>month</code> <code>year</code> <code>time</code> <code>zone</code></p>
+<p>举几个栗子，比如北京时间2016年12月11日7点15分00秒，可以表示为</p>
+<pre><code>Sun, 11 Dec 2016 07:15:00 +0800
+11 Dec 2016 07:15:00 +0800       #省略星期
+11 Dec 2016 07:15 +0800          #省略秒
+</code></pre><p>全球标准时间2016年12月11日13点15分00秒，可以表示为</p>
+<pre><code>Sun, 11 Dec 2016 13:15:00 +0000
+Sun, 11 Dec 2016 13:15:00 GMT    # 822标准
+Sun, 11 Dec 2016 13:15:00 UT     # 822标准
+</code></pre><p>西六区时间2016年12月11日13点15分00秒，可以表示为</p>
+<pre><code>Sun, 11 Dec 2016 13:15:00 -0600
+Sun, 11 Dec 2016 13:15:00 CST    # 822标准
+Sun, 11 Dec 2016 13:15:00 MDT    # 822标准
+</code></pre><p>对于下面这个时间<code>Sun, 11 Dec 2016 13:15:00 -0000</code>，表示时间2016年12月11日13点15分00秒，具体是哪个时区并不知道，但不是GMT时区。<br>另外还是建议大家去看看RFC 2822这个规范，肯定比我写出来的更准确。</p>
+<h2 id="3-常见的时区相关名称简写"><a href="#3-常见的时区相关名称简写" class="headerlink" title="3 常见的时区相关名称简写"></a>3 常见的时区相关名称简写</h2><h3 id="3-1-UTC-协调世界时"><a href="#3-1-UTC-协调世界时" class="headerlink" title="3.1 UTC(协调世界时)"></a>3.1 UTC(协调世界时)</h3><p>英文全称Coordinated Universal Time，也可以叫做世界标准时间，它是一个广泛用于世界的时间标准。至于为什么不取首字母CUT，官方解释是法语中有一个Temps Universel Coordonné，简写为TUC，为了防止混淆（虽然看不出来哪里会混淆），取了一个两个都不像UTC作为简写。</p>
+<h3 id="3-2-GMT-格林威治时间"><a href="#3-2-GMT-格林威治时间" class="headerlink" title="3.2 GMT(格林威治时间)"></a>3.2 GMT(格林威治时间)</h3><p>英文全称Greenwich Mean Time，经常和UTC搞混。他们两个的时间其实没有差别，但是GMT表示的是一个时区，经常被用于欧洲和非洲一些国家作为当地的时间，有点类似”北京时间”这个概念吧。而UTC表示的是一个世界标准时间，它是一个标准而不是时区，没有哪个国家会把UTC作为他们的本地时间。</p>
+<h3 id="3-3-DST-夏令时"><a href="#3-3-DST-夏令时" class="headerlink" title="3.3 DST(夏令时)"></a>3.3 DST(夏令时)</h3><p>英文全称Daylight Saving Time，就是春天会把时间调快一小时，到了秋天又给调回来。目的是为了更符合日常生活，充分利用光照，不会出现凌晨5、6点就贼他妈亮的情况。我们国家没有使用夏令时。</p>
+<h3 id="3-4-CST-北京时间"><a href="#3-4-CST-北京时间" class="headerlink" title="3.4 CST(北京时间)"></a>3.4 CST(北京时间)</h3><p>英文全称China Standard Time，就是中国标准时间，和前面的GMT是同一类东西。这个CST纠结的地方在于，很多地方都使用CST这个缩写：</p>
+<ul>
+<li>Central Standard Time(USA) UTC-6:00</li>
+<li>Central Standard Time(Australia) UTC+9:30</li>
+<li>Cuba Standard Time UTC-4:00</li>
+</ul>
+<p>所以编程的时候最好不要用这个CST简写了，如果通信两端对CST的解析不同的话会出现时间不一致。</p>
+<h2 id="4-Date-对象"><a href="#4-Date-对象" class="headerlink" title="4 Date 对象"></a>4 Date 对象</h2><p><code>Date</code>对象是ECMAScript标准中定义的对象。它的度量方式是从UTC时间1970年1月1日00:00开始所经历的毫秒数。ECMAScript所定义的整型数值大小上限是正负9007199254740992，大概九万亿。但<code>Date</code>对象规定的毫秒数上限会比这个上限小一点，是正负1亿天，就是大概86400亿毫秒。</p>
+<h3 id="4-1-实例化对象"><a href="#4-1-实例化对象" class="headerlink" title="4.1 实例化对象"></a>4.1 实例化对象</h3><p><code>Date</code>对象如果不带<code>new</code>关键字的话，就会忽略传入的参数，返回一个表示当前日期时间的字符串。如果带<code>new</code>关键字，返回一个时间对象，可以接受三种类型：</p>
+<ul>
+<li>毫秒单位的时间戳，从<code>1970-01-01T00:00:00Z</code>开始所经历的毫秒数</li>
+<li>字符串，支持RFC 2822以及ISO 8061两个标准，还有其他的非标准化的表示方式。<code>Date.parse</code>接收的参数和这个一样，返回的是毫秒时间戳。</li>
+<li><code>Date(year, month[, date[, hours[, minutes[, seconds[, milliseconds]]]]])</code>，它能够自动修正不正确的数字，比如你传了一个2016年13月1日，它会解析成2017年1月1日。只有<code>year</code>和<code>month</code>是必须的，后面的参数如果没有给出默认设置成1(日期)或者0(时间)。<code>Date.UTC</code>接收的参数和这个一样，返回的是毫秒时间戳。</li>
+</ul>
+<p>我们看看第二种类型。一般来说，如果传入的字符串不包含时区信息的话，它会默认时区为当前计算机所设置的时区。但是如果是<code>2016-01-01</code>这种格式的日期，则会使用GMT时区。</p>
+<p>但是文档上都<strong>强烈</strong>不建议直接使用字符串进行实例化，因为不同的浏览器上的实现会有偏差，可能无法得到一致的结果。有一篇外国友人进行的<a href="http://dygraphs.com/date-formats.html" target="_blank" rel="external">测试</a>，列出了每个浏览器支持哪些形式的字符串解析，虽然是2012年的老文章，用例有点过时，不过仍然值得一看。</p>
+<p>然后<code>set</code>开头的这类方法里面是没有设置时区这个方法的。虽然有获取时区的方法，但是没有设置时区的方法 :(</p>
+<h3 id="4-2-格式化输出"><a href="#4-2-格式化输出" class="headerlink" title="4.2 格式化输出"></a>4.2 格式化输出</h3><p>大部分<code>get</code>开头的方法都是返回的是对应的本地时间的数值。而<code>getUTC</code>开头的顾名思义就是对应的UTC的数值。</p>
+<p><code>Date</code>对象是没有提供自定义格式化输出的，所以如果要实现自定义格式化输出，只有自己实现。</p>
+<p><code>getTimezoneOffset</code>：返回时区的偏差量，单位为分钟，注意它是返回的是UTC时间相对于当前对象的时间。所以如果当前对象所设置的时区是<code>+0800</code>，那么返回的值是-480，因为UTC时间比<code>+0800</code>时区慢了480分钟，应当是减号。</p>
+<p><code>toDateString</code>：返回易读的日期格式字符串，不包含时间，不包含时区。</p>
+<p><code>toTimeString</code>：返回易读的时间格式字符串，包含时间，包含时区。</p>
+<p><code>toISOString</code>：返回ISO 8601格式的字符串，和<code>toJSON</code>方法输出的字符串相同</p>
+<p><code>toString</code>：返回美国英语中日期格式的字符串。标准中只是规定返回易读格式，没有规定说必须输出哪种格式，可以自由实现。</p>
+<p><code>toUTCString</code>：返回所对应的UTC时间字符串，通常是RFC 1123格式化日期戳。RFC 1123是RFC 822的改进版，它要求年份必须使用4位数字，时区必须使用数字的形式表示。其实可以把RFC 1123的日期标准看做和RFC 2822一样的日期标准。</p>
+<h3 id="4-3-时间戳"><a href="#4-3-时间戳" class="headerlink" title="4.3 时间戳"></a>4.3 时间戳</h3><p>为啥把时间戳拿出来单独说呢，因为很多地方都会用到时间戳，并且时间戳是广泛支持的一种表现形式。不同的语言或者系统对时间标准支持程度都有所不一。但是他们绝大部分都会实现时间戳。</p>
+<p><code>date</code>对象的静态方法都是返回时间戳</p>
+<p><code>Date.now</code>：返回挡墙时间的毫秒时间戳。</p>
+<p><code>Date.parse</code>：接受字符串，返回字符串所表示时间的时间戳。文档上也同样<strong>强烈</strong>不建议使用使用这个方法。</p>
+<p><code>Date.UTC</code>：和上面说的实例化对象第三种方式接受的字符串相同。唯一不同的是，实例化时时区是参考当前计算机的时区，而这个会使用GMT时区。</p>
+<p>需要注意的是，实例方法中所有包含milliseconds的方法，都只是表示当前时刻的毫秒数，数值范围是0-999。如果想获取对象所代表的时间戳的话，使用<code>valueOf</code>方法即可。</p>
+<p><strong>参考文章</strong></p>
+<p><a href="https://tools.ietf.org/html/rfc822#section-5.1" target="_blank" rel="external">RFC 822</a><br><a href="https://www.ietf.org/rfc/rfc2822.txt" target="_blank" rel="external">RFC 2822</a><br><a href="https://tools.ietf.org/html/rfc1123" target="_blank" rel="external">RFC 1123</a><br><a href="https://en.wikipedia.org/wiki/ISO_8601" target="_blank" rel="external">ISO 8601 - Wikipedia</a><br><a href="https://www.timeanddate.com/time/utc-abbreviation.html" target="_blank" rel="external">Why is it Called UTC - not CUT</a><br><a href="https://www.timeanddate.com/time/gmt-utc-time.html" target="_blank" rel="external">The Difference Between GMT and UTC</a><br><a href="https://www.timeanddate.com/time/dst/" target="_blank" rel="external">Daylight Saving Time</a><br><a href="https://my.oschina.net/knightuniverse/blog/133483" target="_blank" rel="external">CET,UTC,GMT,CST几种常见时间概述</a></p>
+</div><div class="tags"><a class="tag-link" href="/tags/date/">date</a><a class="tag-link" href="/tags/javascript/">javascript</a></div></section></div><div class="container"><ul class="nav"><li>上一篇：<a href="/2017/03/11/javascript-error/">JavaScript异常处理最佳实践</a></li><li>下一篇：<a href="/2016/05/03/about-em-and-rem/">说一说CSS里面的数值单位</a></li></ul></div><div id="backToTop"><div class="back-arrow back-arrow-left"></div><div class="back-arrow back-arrow-right"></div></div><footer class="container"><div class="rights"><span>Powered by </span><a href="http://hexo.io" target="_blank">Hexo</a><span>, Theme </span><a href="https://github.com/gary-Shen/hexo-theme-bear" target="_blank">Bear</a><span>.</span></div></footer><script src="/script/jquery.min.js"></script><link rel="stylesheet" href="/fancybox/jquery.fancybox.css"><script src="/fancybox/jquery.fancybox.pack.js"></script><script src="/script/index.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-138857294-1', 'auto');
+ga('send', 'pageview');</script><script src="/script/post.js"></script></body></html>
